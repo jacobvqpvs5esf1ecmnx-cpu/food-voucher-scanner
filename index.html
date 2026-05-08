@@ -6,11 +6,26 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     <style>
-        body { font-family: 'PingFang HK', 'Microsoft JhengHei', sans-serif; text-align: center; padding: 50px; transition: background-color 0.3s; margin: 0; min-height: 100vh;}
-        h1 { color: #333; }
+        body { font-family: 'PingFang HK', 'Microsoft JhengHei', sans-serif; text-align: center; padding: 50px; transition: background-color 0.3s; margin: 0; min-height: 100vh; position: relative;}
+        h1 { color: #333; margin-top: 20px;}
+        
+        /* 實時統計計數機樣式 */
+        #counterBox { 
+            display: inline-block; 
+            background-color: #333; 
+            color: white; 
+            font-size: 24px; 
+            font-weight: bold; 
+            padding: 10px 30px; 
+            border-radius: 30px; 
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+        #claimedCount { color: #4CAF50; font-size: 30px; }
+
         #barcodeInput { font-size: 30px; padding: 15px; width: 400px; text-align: center; border: 2px solid #ccc; border-radius: 10px; outline: none; }
         #barcodeInput:focus { border-color: #2196F3; box-shadow: 0 0 10px rgba(33, 150, 243, 0.5); }
-        #message { font-size: 50px; font-weight: bold; margin-top: 40px; padding: 20px; border-radius: 10px; }
+        #message { font-size: 50px; font-weight: bold; margin-top: 30px; padding: 20px; border-radius: 10px; }
         .info-box { margin-top: 20px; font-size: 28px; color: #333; line-height: 1.5; background: rgba(255,255,255,0.8); display: inline-block; padding: 20px 40px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);}
         
         /* 狀態顏色 */
@@ -23,6 +38,12 @@
 <body class="status-ready" id="bg">
 
     <h1>🎁 中心食物劵派發系統</h1>
+    
+    <div id="counterBox">
+        今日已派發： <span id="claimedCount">--</span> 份
+    </div>
+    
+    <br>
     <p style="font-size: 18px; color: #666;">請使用 Scanner 掃描條碼，或手動輸入會員編號後按 Enter</p>
     
     <input type="text" id="barcodeInput" placeholder="請掃描條碼或輸入會員編號..." autofocus autocomplete="off">
@@ -50,6 +71,12 @@
         const message = document.getElementById('message');
         const memberInfo = document.getElementById('memberInfo');
         const bg = document.getElementById('bg');
+        const claimedCountSpan = document.getElementById('claimedCount');
+
+        // 🔥 新增：實時監聽已領取數量
+        db.collection('members').where('hasClaimed', '==', true).onSnapshot((snapshot) => {
+            claimedCountSpan.innerText = snapshot.size;
+        });
 
         // 點擊網頁任何地方，自動將焦點放回輸入框
         document.addEventListener('click', () => { input.focus(); });
@@ -69,21 +96,21 @@
                     let targetRef = null;
                     let targetData = null;
 
-                    // 1. 先嘗試用 Barcode 去搵 (Document ID)
+                    // 1. 先嘗試用 Barcode 去搵
                     const docSnap = await db.collection('members').doc(inputValue).get();
                     
                     if (docSnap.exists) {
                         targetRef = db.collection('members').doc(inputValue);
                         targetData = docSnap.data();
                     } else {
-                        // 2. 如果 Barcode 搵唔到，嘗試用 MemberNo 去搵 (支援原輸入及全大階)
+                        // 2. 用 MemberNo 去搵
                         const querySnap = await db.collection('members').where('memberNo', '==', inputValue).get();
                         
                         if (!querySnap.empty) {
                             targetRef = querySnap.docs[0].ref;
                             targetData = querySnap.docs[0].data();
                         } else {
-                            // 試埋全大階 (例如將 cwd06841 轉做 CWD06841)
+                            // 試埋全大階
                             const upperQuerySnap = await db.collection('members').where('memberNo', '==', inputValue.toUpperCase()).get();
                             if (!upperQuerySnap.empty) {
                                 targetRef = upperQuerySnap.docs[0].ref;
@@ -92,7 +119,7 @@
                         }
                     }
 
-                    // 處理搵到資料嘅情況
+                    // 處理結果
                     if (targetData && targetRef) {
                         if (targetData.hasClaimed) {
                             // ❌ 已經領取過
@@ -109,7 +136,7 @@
                             memberInfo.style.display = "inline-block";
                             
                         } else {
-                            // ✅ 未領取，即時更新資料庫紀錄
+                            // ✅ 未領取，即時更新紀錄
                             const now = new Date().toISOString();
                             await targetRef.update({
                                 hasClaimed: true,
@@ -122,7 +149,7 @@
                             memberInfo.style.display = "inline-block";
                         }
                     } else {
-                        // ⚠️ 找不到任何紀錄
+                        // ⚠️ 查無此人
                         bg.className = "status-warning";
                         message.innerText = "⚠️ 查無此人";
                         memberInfo.innerHTML = `條碼或編號 <b>${inputValue}</b> 不在合資格名單內<br>請重新核對。`;
