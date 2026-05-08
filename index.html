@@ -1,65 +1,246 @@
-<style>
-    /* ... 保留原本樣式 ... */
-    .update-box { margin-top: 15px; border-top: 1px solid #ddd; padding-top: 10px; font-size: 20px; }
-    .status-select { font-size: 18px; padding: 5px; border-radius: 5px; }
-    .btn-update { padding: 5px 15px; background: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer; }
-</style>
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <title>食物劵派發掃描系統 (確認按鈕版)</title>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <style>
+        body { font-family: 'PingFang HK', 'Microsoft JhengHei', sans-serif; text-align: center; padding: 30px; transition: background-color 0.3s; margin: 0; min-height: 100vh; background-color: #f0f2f5;}
+        h1 { color: #333; }
+        
+        /* 計數機 */
+        #counterBox { display: inline-block; background-color: #333; color: white; font-size: 24px; font-weight: bold; padding: 10px 30px; border-radius: 30px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.2);}
+        #claimedCount { color: #4CAF50; font-size: 30px; }
+        
+        /* 輸入框 */
+        #barcodeInput { font-size: 30px; padding: 15px; width: 60%; text-align: center; border: 3px solid #ccc; border-radius: 10px; outline: none; margin-bottom: 20px;}
+        #barcodeInput:focus { border-color: #2196F3; box-shadow: 0 0 10px rgba(33, 150, 243, 0.3); }
+        
+        /* 顯示卡片 */
+        #resultCard { display: none; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); max-width: 800px; margin: auto; }
+        #statusMsg { font-size: 40px; font-weight: bold; margin-bottom: 15px; }
+        .member-name { font-size: 50px; font-weight: bold; margin-bottom: 10px; color: #000; }
+        .member-no { font-size: 25px; color: #666; margin-bottom: 20px; }
+        
+        /* 更新居住狀況區塊 */
+        .update-box { margin-top: 15px; padding-top: 15px; border-top: 1px dashed #ccc; font-size: 20px; text-align: left; background: #f9f9f9; padding: 15px; border-radius: 10px; color: #333;}
+        .status-select { font-size: 18px; padding: 5px; border-radius: 5px;}
+        .btn-update { padding: 8px 15px; background: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-left: 10px;}
+        
+        /* 按鈕群組 */
+        .btn-group { margin-top: 30px; }
+        .btn { font-size: 30px; padding: 15px 40px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; margin: 5px; }
+        .btn-confirm { background-color: #4CAF50; color: white; width: 100%; margin-bottom: 15px;}
+        .btn-confirm:hover { background-color: #45a049; }
+        .btn-cancel { background-color: #9e9e9e; color: white; font-size: 20px; width: 100%;}
 
-<script>
-    // ... 前面 Firebase 初始化同原本邏輯保留 ...
+        /* 文字顏色 */
+        .text-red { color: #f44336; }
+        .text-green { color: #4CAF50; }
+        .text-orange { color: #ff9800; }
+    </style>
+</head>
+<body>
 
-    // 修改處理結果嘅部分 (大約喺 line 120 附近)
-    if (targetData && targetRef) {
-        let statusHtml = `
-            姓名：<b>${targetData.name}</b> (${targetData.memberNo})<br>
-            現時紀錄：<span id="currentLivingStatus">${targetData.livingStatus || '未有資料'}</span>
-            <div class="update-box">
-                更改狀況：
-                <select id="newStatus" class="status-select">
-                    <option value="獨居">獨居</option>
-                    <option value="雙老">雙老</option>
-                    <option value="其他">其他</option>
-                </select>
-                <button onclick="updateMemberStatus('${targetRef.id}')" class="btn-update">更新資料</button>
-            </div>
-        `;
+    <h1>🎁 中心食物劵派發系統</h1>
+    
+    <div id="counterBox">
+        今日已派發： <span id="claimedCount">--</span> 份
+    </div><br>
+    
+    <p style="font-size: 18px; color: #666;">請使用 Scanner 掃描條碼，或手動輸入會員編號</p>
+    <input type="text" id="barcodeInput" placeholder="請掃描條碼或輸入編號..." autofocus autocomplete="off">
+    
+    <div id="resultCard">
+        <div id="statusMsg"></div>
+        <div class="member-name" id="dispName"></div>
+        <div class="member-no" id="dispNo"></div>
+        
+        <div class="update-box">
+            現時居住狀況：<b id="currentLivingStatus" style="color:#E91E63;">未有資料</b><br><br>
+            更改狀況：
+            <select id="newStatus" class="status-select">
+                <option value="獨居">獨居</option>
+                <option value="雙老">雙老</option>
+                <option value="與家人同住">與家人同住</option>
+                <option value="其他">其他</option>
+            </select>
+            <button onclick="updateMemberStatus()" class="btn-update">更新紀錄</button>
+        </div>
+        
+        <div class="btn-group">
+            <button id="confirmBtn" class="btn btn-confirm">確認派發食物劵</button>
+            <button id="cancelBtn" class="btn btn-cancel">取消 / 掃描下一位</button>
+        </div>
+    </div>
 
-        if (targetData.hasClaimed) {
-            bg.className = "status-error";
-            message.innerText = "❌ 警告：此會員已領取！";
-            let timeStr = formatTime(targetData.claimTime);
-            memberInfo.innerHTML = statusHtml + `<br><span style="color:red; font-weight:bold;">領取時間：${timeStr}</span>`;
-        } else {
-            // ✅ 自動紀錄領取
+    <script>
+        // 你的 Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyBkYaOS6YFapXxt4UTwTy3bkK-C_f50hWw",
+            authDomain: "food-voucher-2026.firebaseapp.com",
+            projectId: "food-voucher-2026",
+            storageBucket: "food-voucher-2026.firebasestorage.app",
+            messagingSenderId: "531283361505",
+            appId: "1:531283361505:web:bc21a158f0b8a6975441a0"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        const input = document.getElementById('barcodeInput');
+        const resultCard = document.getElementById('resultCard');
+        const statusMsg = document.getElementById('statusMsg');
+        const dispName = document.getElementById('dispName');
+        const dispNo = document.getElementById('dispNo');
+        const confirmBtn = document.getElementById('confirmBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const claimedCountSpan = document.getElementById('claimedCount');
+        const currentLivingStatus = document.getElementById('currentLivingStatus');
+        
+        let currentTargetRef = null;
+
+        // 實時監聽已領取數量
+        db.collection('members').where('hasClaimed', '==', true).onSnapshot((snapshot) => {
+            claimedCountSpan.innerText = snapshot.size;
+        });
+
+        // 點擊空白處自動對焦輸入框 (避開按鈕同下拉選單)
+        document.addEventListener('click', (e) => { 
+            if(e.target.tagName !== 'BUTTON' && e.target.tagName !== 'SELECT') {
+                input.focus(); 
+            }
+        });
+
+        // 掃描或按 Enter
+        input.addEventListener('keypress', async (e) => {
+            if (e.key === 'Enter') {
+                const inputValue = input.value.trim();
+                input.value = "";
+                if (!inputValue) return;
+
+                // 重置畫面
+                resultCard.style.display = "none";
+                document.body.style.backgroundColor = "#f0f2f5";
+                currentTargetRef = null;
+
+                try {
+                    let targetData = null;
+
+                    // 1. 搵 Barcode
+                    const docSnap = await db.collection('members').doc(inputValue).get();
+                    if (docSnap.exists) {
+                        currentTargetRef = db.collection('members').doc(inputValue);
+                        targetData = docSnap.data();
+                    } else {
+                        // 2. 搵 MemberNo
+                        const querySnap = await db.collection('members').where('memberNo', '==', inputValue).get();
+                        if (!querySnap.empty) {
+                            currentTargetRef = querySnap.docs[0].ref;
+                            targetData = querySnap.docs[0].data();
+                        } else {
+                            // 3. 搵 MemberNo (全大階)
+                            const upperQuerySnap = await db.collection('members').where('memberNo', '==', inputValue.toUpperCase()).get();
+                            if (!upperQuerySnap.empty) {
+                                currentTargetRef = upperQuerySnap.docs[0].ref;
+                                targetData = upperQuerySnap.docs[0].data();
+                            }
+                        }
+                    }
+
+                    // 處理結果
+                    if (targetData && currentTargetRef) {
+                        resultCard.style.display = "block";
+                        dispName.innerText = targetData.name;
+                        dispNo.innerText = "會員編號: " + targetData.memberNo;
+                        currentLivingStatus.innerText = targetData.livingStatus || "未有資料";
+
+                        if (targetData.hasClaimed) {
+                            // ❌ 已領取
+                            document.body.style.backgroundColor = "#ffcdd2";
+                            let timeStr = formatTime(targetData.claimTime);
+                            statusMsg.innerHTML = `⚠️ 此會員已領取！<br><span style="font-size:20px; color:#333;">領取時間：${timeStr}</span>`;
+                            statusMsg.className = "text-red";
+                            confirmBtn.style.display = "none"; // 隱藏確認掣
+                        } else {
+                            // ✅ 未領取，等待確認
+                            document.body.style.backgroundColor = "#c8e6c9";
+                            statusMsg.innerText = "✅ 資格確認：未領取";
+                            statusMsg.className = "text-green";
+                            confirmBtn.style.display = "block"; // 顯示確認掣
+                            confirmBtn.disabled = false;
+                            confirmBtn.innerText = "確認派發食物劵";
+                            confirmBtn.focus(); // 自動 Focus 去確認掣，職員可以直接再撳 Enter
+                        }
+                    } else {
+                        // ⚠️ 查無此人
+                        document.body.style.backgroundColor = "#ffe0b2";
+                        resultCard.style.display = "block";
+                        dispName.innerText = "查無此人";
+                        dispNo.innerText = inputValue;
+                        currentLivingStatus.innerText = "--";
+                        statusMsg.innerText = "⚠️ 找不到此條碼或編號";
+                        statusMsg.className = "text-orange";
+                        confirmBtn.style.display = "none";
+                    }
+                } catch (error) {
+                    alert("查詢錯誤：" + error);
+                }
+            }
+        });
+
+        // 撳「確認派發」掣
+        confirmBtn.onclick = async () => {
+            if (!currentTargetRef) return;
+            confirmBtn.disabled = true;
+            confirmBtn.innerText = "紀錄中...";
+            try {
+                await currentTargetRef.update({
+                    hasClaimed: true,
+                    claimTime: new Date().toISOString()
+                });
+                document.body.style.backgroundColor = "#4CAF50"; // 變成深綠色
+                statusMsg.innerText = "✅ 成功紀錄！請交出食物劵。";
+                statusMsg.className = "text-green";
+                confirmBtn.style.display = "none";
+                setTimeout(() => input.focus(), 100); // 將焦點放回輸入框準備下一個
+            } catch (e) {
+                alert("錯誤：" + e);
+                confirmBtn.disabled = false;
+            }
+        };
+
+        // 撳「取消」掣
+        cancelBtn.onclick = () => {
+            resultCard.style.display = "none";
+            document.body.style.backgroundColor = "#f0f2f5";
+            input.focus();
+        };
+
+        // 更新居住狀況
+        window.updateMemberStatus = async function() {
+            if (!currentTargetRef) return;
+            const newStatus = document.getElementById('newStatus').value;
             const now = new Date().toISOString();
-            await targetRef.update({ hasClaimed: true, claimTime: now });
-            
-            bg.className = "status-success";
-            message.innerText = "✅ 可派發食物劵";
-            memberInfo.innerHTML = statusHtml + `<br><span style="color:green; font-weight:bold;">紀錄成功！請交出食物劵。</span>`;
-        }
-        memberInfo.style.display = "inline-block";
-    }
+            try {
+                await currentTargetRef.update({
+                    livingStatus: newStatus,
+                    statusUpdateTime: now
+                });
+                currentLivingStatus.innerText = newStatus;
+                alert('資料已成功更新為：' + newStatus);
+            } catch (e) {
+                alert('更新失敗：' + e);
+            }
+        };
 
-    // 🔥 新增：更新居住狀況嘅 Function
-    window.updateMemberStatus = async function(docId) {
-        const newStatus = document.getElementById('newStatus').value;
-        const now = new Date().toISOString();
-        try {
-            await db.collection('members').doc(docId).update({
-                livingStatus: newStatus,
-                statusUpdateTime: now // 紀錄更新時間
-            });
-            document.getElementById('currentLivingStatus').innerText = newStatus;
-            alert('資料已更新為：' + newStatus);
-        } catch (e) {
-            alert('更新失敗：' + e);
+        // 時間格式化工具
+        function formatTime(isoStr) {
+            if (!isoStr) return '未知時間';
+            const d = new Date(isoStr);
+            return `${d.getMonth()+1}月${d.getDate()}日 ${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`;
         }
-    }
-
-    function formatTime(isoStr) {
-        if (!isoStr) return '未知';
-        const d = new Date(isoStr);
-        return `${d.getMonth()+1}月${d.getDate()}日 ${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`;
-    }
-</script>
+    </script>
+</body>
+</html>
