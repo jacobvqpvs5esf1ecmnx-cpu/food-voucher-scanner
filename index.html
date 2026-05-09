@@ -2,60 +2,51 @@
 <html lang="zh-HK">
 <head>
     <meta charset="UTF-8">
-    <title>食物劵派發系統 (年齡提示及居住狀況更新版)</title>
+    <title>聖雅各福群會 中西區長者地區中心 - 「愛心食肆賞你惠食」第五輪</title>
     <meta name="robots" content="noindex, nofollow">
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     
     <style>
-        /* 解決排版撐爆問題 */
         *, *::before, *::after { box-sizing: border-box; }
 
         body { font-family: 'PingFang HK', 'Microsoft JhengHei', sans-serif; text-align: center; padding: 20px; margin: 0; min-height: 100vh; background-color: #f0f2f5; transition: background-color 0.3s;}
         h1 { color: #333; margin-bottom: 15px;}
         .screen { display: none; } .screen.active { display: block; }
         
-        /* 登入畫面 */
-        .login-container { background: white; max-width: 400px; margin: 80px auto; padding: 40px 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .login-container { background: white; max-width: 500px; margin: 80px auto; padding: 40px 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
         .login-input { font-size: 24px; padding: 15px; width: 100%; text-align: center; border: 2px solid #ccc; border-radius: 10px; margin-bottom: 20px; outline: none;}
         .btn-login { background-color: #1976D2; color: white; font-size: 24px; padding: 15px; width: 100%; border: none; border-radius: 10px; cursor: pointer; font-weight: bold;}
 
-        /* 進度儀表板 */
         #dashboard { display: none; background-color: #333; color: white; padding: 15px 40px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); text-align: center; }
         .dash-stats { font-size: 24px; font-weight: bold; }
         .text-blue { color: #42A5F5; } .text-orange { color: #FFCA28; } .text-green { color: #66BB6A; }
         
-        /* 選單與按鈕 */
         .menu-btn { font-size: 35px; padding: 30px; margin: 15px; width: 40%; border-radius: 20px; border: none; cursor: pointer; font-weight: bold; box-shadow: 0 10px 20px rgba(0,0,0,0.1); transition: transform 0.2s;}
         .btn-member { background-color: #2196F3; color: white; }
         .btn-nonmember { background-color: #FF9800; color: white; }
         .back-btn { position: absolute; top: 20px; left: 20px; font-size: 18px; padding: 10px 20px; background: #607D8B; color: white; border: none; border-radius: 10px; cursor: pointer;}
         
-        /* 輸入框與結果卡片 */
         .main-input { font-size: 26px; padding: 15px; width: 100%; text-align: center; border: 3px solid #ccc; border-radius: 10px; outline: none; text-transform: uppercase;}
         .result-card { display: none; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); max-width: 800px; margin: auto; }
         .status-msg { font-size: 35px; font-weight: bold; margin-bottom: 10px; }
         .member-name { font-size: 55px; font-weight: bold; margin-bottom: 5px; color: #000; }
         .member-id-tag { font-size: 24px; color: #666; margin-bottom: 20px; display: block;}
         
-        /* 年齡警告框 */
         #ageWarningMsg { display: none; background: #ffebee; border: 2px solid #f44336; color: #c62828; padding: 15px; border-radius: 10px; margin-bottom: 15px; text-align: left; }
         .warning-title { font-size: 22px; font-weight: bold; margin-bottom: 8px; display: block;}
         .warning-text { font-size: 16px; line-height: 1.5; margin: 0;}
         
-        /* 資料更新區 */
         .update-box { margin-top: 10px; padding: 15px; border: 2px dashed #90CAF9; font-size: 20px; text-align: left; background: #FAFAFA; border-radius: 10px;}
         .update-row { margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
         .status-select { font-size: 20px; padding: 8px; border-radius: 8px; border: 1px solid #ccc; width: 200px;}
         .btn-update { padding: 10px 25px; background: #1976D2; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 18px; font-weight: bold;}
         
-        /* 洗水號輸入區 */
         .voucher-box { margin-top: 20px; padding: 20px; background: #e3f2fd; border: 2px solid #2196F3; border-radius: 15px;}
         .btn-confirm { background-color: #4CAF50; color: white; width: 100%; font-size: 30px; padding: 15px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; margin-top: 20px;}
         .btn-cancel { background-color: #9e9e9e; color: white; font-size: 20px; width: 100%; padding: 10px; border: none; border-radius: 10px; cursor: pointer; margin-top: 10px;}
         
-        /* 非會員表單 */
         .nm-form { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); max-width: 600px; margin: auto; }
         .nm-form label { display: block; font-size: 20px; font-weight: bold; text-align: left; margin-top: 15px; color: #333;}
         .nm-input { font-size: 24px; padding: 12px; width: 100%; border: 2px solid #ccc; border-radius: 10px; margin-top: 8px; outline: none;}
@@ -67,8 +58,11 @@
 
     <div id="screen-login" class="screen active">
         <div class="login-container">
-            <h1 style="font-size: 30px; color: #1565c0;">🔒 職員系統登入</h1>
-            <input type="password" id="loginPwd" class="login-input" placeholder="輸入密碼...">
+            <div style="font-size: 20px; color: #666; font-weight: bold; margin-bottom: 5px;">聖雅各福群會 中西區長者地區中心</div>
+            <div style="font-size: 32px; color: #E65100; font-weight: bold; margin-bottom: 25px;">「愛心食肆賞你惠食」第五輪</div>
+            
+            <h2 style="font-size: 26px; color: #1565c0; margin-top: 0;">🔒 系統登入</h2>
+            <input type="password" id="loginPwd" class="login-input" placeholder="輸入職員密碼...">
             <button onclick="checkLogin()" class="btn-login">進入系統</button>
         </div>
     </div>
@@ -82,14 +76,17 @@
     </div><br>
 
     <div id="screen-home" class="screen">
-        <h1>請選擇領取者類別</h1>
+        <div style="font-size: 24px; color: #666; font-weight: bold; margin-bottom: 10px; margin-top: 20px;">聖雅各福群會 中西區長者地區中心</div>
+        <h1 style="font-size: 45px; color: #E65100; margin-top: 0; margin-bottom: 40px;">「愛心食肆賞你惠食」第五輪</h1>
+        
+        <h2 style="font-size: 35px; color: #333;">請選擇領取者類別</h2>
         <button class="menu-btn btn-member" onclick="switchScreen('screen-member')">👤 中心會員</button>
         <button class="menu-btn btn-nonmember" onclick="switchScreen('screen-nonmember')">🚶 非會員</button>
     </div>
 
     <div id="screen-member" class="screen">
-        <button class="back-btn" onclick="switchScreen('screen-home')">🔙 返回主頁</button>
-        <h1>🎁 會員食物劵派發</h1>
+        <button class="back-btn" onclick="switchScreen('screen-home')">🔙 返回首頁</button>
+        <h1>🎁 會員領取登記</h1>
         <div style="display: flex; justify-content: center; max-width: 600px; margin: 0 auto 20px auto;">
             <input type="text" id="barcodeInput" class="main-input" placeholder="掃描會員證或輸入編號..." autocomplete="off" oninput="this.value = this.value.toUpperCase()">
             <button id="searchMemberBtn" style="padding:0 20px; margin-left:10px; border-radius:10px; border:none; background:#607D8B; color:white; font-size:20px; cursor:pointer;">搜尋</button>
@@ -131,7 +128,7 @@
             </div>
             
             <div class="voucher-box" id="voucherSection">
-                <label style="font-size: 22px; font-weight: bold; color: #1565c0; display: block; margin-bottom: 10px;">🏷️ 請掃描食物劵洗水號：</label>
+                <label style="font-size: 22px; font-weight: bold; color: #1565c0; display: block; margin-bottom: 10px;">🏷️ 請掃描洗水號：</label>
                 <input type="text" id="voucherInput" class="main-input" placeholder="例如: 28601..." autocomplete="off" oninput="this.value = this.value.toUpperCase()">
             </div>
             
@@ -141,8 +138,8 @@
     </div>
 
     <div id="screen-nonmember" class="screen">
-        <button class="back-btn" onclick="switchScreen('screen-home')">🔙 返回主頁</button>
-        <h1>🚶 非會員登記</h1>
+        <button class="back-btn" onclick="switchScreen('screen-home')">🔙 返回首頁</button>
+        <h1>🚶 非會員領取登記</h1>
         <div class="nm-form">
             <label>姓名：</label><input type="text" id="nmName" class="nm-input" placeholder="全名">
             <label>身份證：</label><input type="text" id="nmHkid" class="nm-input" placeholder="身份證" oninput="this.value = this.value.toUpperCase()">
@@ -154,7 +151,7 @@
                 <option value="隱蔽長者">隱蔽長者</option>
             </select>
             <div class="voucher-box" style="background: #fff3e0; border-color: #FF9800;">
-                <label style="color: #e65100; font-weight:bold;">🏷️ 食物劵洗水號：</label>
+                <label style="color: #e65100; font-weight:bold;">🏷️ 請掃描洗水號：</label>
                 <input type="text" id="nmVoucherInput" class="nm-input" placeholder="洗水號" oninput="this.value = this.value.toUpperCase()">
             </div>
             <button id="nmConfirmBtn" class="btn-confirm" style="background:#FF9800;">確認派發</button>
@@ -162,8 +159,8 @@
     </div>
 
     <script>
-        // 1. 職員登入設定
-        const STAFF_PASSWORD = "CWDECCTEAMA1234"; 
+        // 職員登入設定
+        const STAFF_PASSWORD = "CwdeccTeama1234"; 
         function checkLogin() {
             if (document.getElementById('loginPwd').value === STAFF_PASSWORD) {
                 sessionStorage.setItem('isStaffLoggedIn', 'true');
@@ -178,7 +175,7 @@
         if (sessionStorage.getItem('isStaffLoggedIn') === 'true') showMainSystem();
         document.getElementById('loginPwd').onkeypress = e => { if(e.key==='Enter') checkLogin(); };
 
-        // 2. Firebase 初始化
+        // Firebase 初始化
         const firebaseConfig = {
             apiKey: "AIzaSyBkYaOS6YFapXxt4UTwTy3bkK-C_f50hWw",
             authDomain: "food-voucher-2026.firebaseapp.com",
@@ -190,13 +187,13 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // 3. 私隱防護：姓名遮蔽函數
+        // 姓名遮蔽函數
         function maskName(name) {
             if (!name || name.length < 2) return name;
             return name.charAt(0) + "*".repeat(name.length - 2) + name.charAt(name.length - 1);
         }
 
-        // 4. 洗水號白名單設定
+        // 洗水號白名單設定
         const validVoucherRules = ["28601-28613", "28211-28300", "28301-28400", "28401-28500", "28501-28600", "6101-6200", "6201-6300", "6301-6400", "6401-6448", "6046-6100"];
         const validVoucherSet = new Set();
         validVoucherRules.forEach(r => {
@@ -206,7 +203,7 @@
             } else validVoucherSet.add(r);
         });
 
-        // 5. 系統邏輯
+        // 系統邏輯
         function switchScreen(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
@@ -230,7 +227,7 @@
             document.getElementById('barcodeInput').value = "";
             if (!val) return;
             document.getElementById('resultCard').style.display = "none";
-            document.getElementById('ageWarningMsg').style.display = "none"; // 重置警告框
+            document.getElementById('ageWarningMsg').style.display = "none"; 
             document.body.style.backgroundColor = "#f0f2f5";
             currentTargetRef = null;
 
@@ -248,7 +245,6 @@
                     document.getElementById('dispName').innerText = maskName(data.name);
                     document.getElementById('dispNo').innerText = "會員編號: " + data.memberNo;
                     
-                    // 🔥 檢查年齡是否小於 60 歲
                     if (data.age) {
                         const ageNum = parseInt(data.age, 10);
                         if (!isNaN(ageNum) && ageNum < 60) {
@@ -287,7 +283,7 @@
 
             await currentTargetRef.update({ hasClaimed: true, claimTime: new Date().toISOString(), voucherNo: v });
             document.body.style.backgroundColor = "#4CAF50";
-            document.getElementById('statusMsg').innerHTML = "✅ 成功紀錄！請交出食物劵。";
+            document.getElementById('statusMsg').innerHTML = "✅ 成功紀錄！";
             document.getElementById('confirmBtn').style.display = "none";
             document.getElementById('voucherSection').style.display = "none";
             setTimeout(() => document.getElementById('barcodeInput').focus(), 1500);
@@ -330,6 +326,7 @@
 
         document.getElementById('cancelBtn').onclick = () => {
             document.getElementById('resultCard').style.display = "none";
+            document.getElementById('ageWarningMsg').style.display = "none"; 
             document.body.style.backgroundColor = "#f0f2f5";
             document.getElementById('barcodeInput').focus();
         };
