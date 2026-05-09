@@ -22,7 +22,7 @@
         /* 返回按鈕 */
         .back-btn { position: absolute; top: 20px; left: 20px; font-size: 20px; padding: 10px 20px; background: #607D8B; color: white; border: none; border-radius: 10px; cursor: pointer;}
         
-        /* 🔥 新增：進度儀表板 */
+        /* 進度儀表板 */
         #dashboard { display: inline-block; background-color: #333; color: white; padding: 15px 40px; border-radius: 15px; margin-bottom: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); text-align: center; }
         .dash-title { font-size: 20px; color: #ccc; margin-bottom: 10px; }
         .dash-stats { font-size: 28px; font-weight: bold; margin-bottom: 8px; }
@@ -123,13 +123,13 @@
             <label>姓名：</label>
             <input type="text" id="nmName" class="nm-input" placeholder="輸入姓名...">
             
-            <label>身份證號碼 ：</label>
+            <label>身份證號碼：</label>
             <input type="text" id="nmHkid" class="nm-input" placeholder="例：A1234567" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">
             
-            <label>電話號碼 ：</label>
+            <label>電話號碼：</label>
             <input type="tel" id="nmPhone" class="nm-input" placeholder="輸入8位數字電話..." maxlength="8">
 
-            <label>居住狀況 ：</label>
+            <label>居住狀況：</label>
             <select id="nmLivingStatus" class="nm-input" style="height: 65px; background: white;">
                 <option value="獨居">獨居</option>
                 <option value="雙老">雙老</option>
@@ -178,7 +178,7 @@
             }
         }
 
-        // 🔥 實時監聽已領取數量 (獨立計算會員及非會員)
+        // 實時監聽已領取數量
         function updateCounter() {
             let memCount = 0;
             let nonMemCount = 0;
