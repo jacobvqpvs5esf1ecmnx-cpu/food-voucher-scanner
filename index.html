@@ -2,7 +2,8 @@
 <html lang="zh-HK">
 <head>
     <meta charset="UTF-8">
-    <title>食物劵派發系統 (白名單嚴格核對版)</title>
+    <title>食物劵派發系統 (私隱防護版)</title>
+    <meta name="robots" content="noindex, nofollow">
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     <style>
@@ -11,13 +12,19 @@
         h1 { color: #333; margin-bottom: 15px;}
         .screen { display: none; } .screen.active { display: block; }
         
+        .login-container { background: white; max-width: 400px; margin: 100px auto; padding: 40px 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .login-input { font-size: 24px; padding: 15px; width: 100%; text-align: center; border: 2px solid #ccc; border-radius: 10px; margin-bottom: 20px; outline: none;}
+        .login-input:focus { border-color: #2196F3; }
+        .btn-login { background-color: #1976D2; color: white; font-size: 24px; padding: 15px; width: 100%; border: none; border-radius: 10px; cursor: pointer; font-weight: bold;}
+        .btn-login:hover { background-color: #1565C0; }
+
         .menu-btn { font-size: 35px; padding: 30px; margin: 15px; width: 40%; border-radius: 20px; border: none; cursor: pointer; font-weight: bold; box-shadow: 0 10px 20px rgba(0,0,0,0.1); transition: transform 0.2s;}
         .menu-btn:hover { transform: scale(1.05); }
         .btn-member { background-color: #2196F3; color: white; }
         .btn-nonmember { background-color: #FF9800; color: white; }
         .back-btn { position: absolute; top: 20px; left: 20px; font-size: 18px; padding: 10px 20px; background: #607D8B; color: white; border: none; border-radius: 10px; cursor: pointer;}
         
-        #dashboard { display: inline-block; background-color: #333; color: white; padding: 15px 40px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); text-align: center; }
+        #dashboard { display: none; background-color: #333; color: white; padding: 15px 40px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); text-align: center; }
         .dash-title { font-size: 18px; color: #ccc; margin-bottom: 5px; }
         .dash-stats { font-size: 24px; font-weight: bold; margin-bottom: 5px; }
         .dash-total { font-size: 16px; color: #aaa; border-top: 1px solid #555; padding-top: 5px; margin-top: 5px; }
@@ -56,6 +63,15 @@
 </head>
 <body>
 
+    <div id="screen-login" class="screen active">
+        <div class="login-container">
+            <h1 style="font-size: 30px; color: #1565c0;">🔒 系統登入</h1>
+            <p style="color: #666; margin-bottom: 20px;">請輸入職員專用密碼進入系統</p>
+            <input type="password" id="loginPwd" class="login-input" placeholder="輸入密碼...">
+            <button onclick="checkLogin()" class="btn-login">進入系統</button>
+        </div>
+    </div>
+
     <div id="dashboard">
         <div class="dash-title">📊 派發進度總覽</div>
         <div class="dash-stats">
@@ -67,7 +83,7 @@
         </div>
     </div><br>
 
-    <div id="screen-home" class="screen active">
+    <div id="screen-home" class="screen">
         <h1 style="font-size: 45px;">請選擇領取者類別</h1>
         <button class="menu-btn btn-member" onclick="switchScreen('screen-member')">👤 中心會員</button>
         <button class="menu-btn btn-nonmember" onclick="switchScreen('screen-nonmember')">🚶 非會員</button>
@@ -137,13 +153,10 @@
         <div class="nm-form">
             <label>姓名：</label>
             <input type="text" id="nmName" class="nm-input" placeholder="輸入姓名...">
-            
             <label>身份證號碼：</label>
             <input type="text" id="nmHkid" class="nm-input" placeholder="例：A1234567" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">
-            
             <label>電話號碼：</label>
             <input type="tel" id="nmPhone" class="nm-input" placeholder="輸入8位數字電話..." maxlength="8">
-
             <label>居住狀況：</label>
             <select id="nmLivingStatus" class="nm-input" style="height: 55px; background: white;">
                 <option value="獨居">獨居</option>
@@ -152,17 +165,42 @@
                 <option value="與家人同住">與家人同住</option>
                 <option value="其他">其他</option>
             </select>
-
             <div class="voucher-box" style="margin-top: 20px; background: #fff3e0; border-color: #FF9800;">
                 <label class="voucher-label" style="color: #e65100;">🏷️ 請掃描或輸入食物劵洗水號：</label>
                 <input type="text" id="nmVoucherInput" class="nm-input" placeholder="例如: 28601..." style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">
             </div>
-            
             <button id="nmConfirmBtn" class="btn btn-confirm" style="background-color: #FF9800; margin-top: 20px;">確認派發</button>
         </div>
     </div>
 
     <script>
+        const STAFF_PASSWORD = "CWD2026"; 
+
+        document.getElementById('loginPwd').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') checkLogin();
+        });
+
+        function checkLogin() {
+            const pwd = document.getElementById('loginPwd').value;
+            if (pwd === STAFF_PASSWORD) {
+                sessionStorage.setItem('isStaffLoggedIn', 'true');
+                showMainSystem();
+            } else {
+                alert('❌ 密碼錯誤！請聯絡負責人。');
+                document.getElementById('loginPwd').value = '';
+            }
+        }
+
+        function showMainSystem() {
+            document.getElementById('screen-login').classList.remove('active');
+            document.getElementById('screen-home').classList.add('active');
+            document.getElementById('dashboard').style.display = 'inline-block';
+        }
+
+        if (sessionStorage.getItem('isStaffLoggedIn') === 'true') {
+            showMainSystem();
+        }
+
         const firebaseConfig = {
             apiKey: "AIzaSyBkYaOS6YFapXxt4UTwTy3bkK-C_f50hWw",
             authDomain: "food-voucher-2026.firebaseapp.com",
@@ -174,35 +212,36 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // 🔥 1. 在這裡設定你所有的有效洗水號範圍 (可以隨時回來修改)
         const validVoucherRules = [
-            "28601-28613",
-            "28211-28300",
-            "28301-28400",
-            "28401-28500",
-            "28501-28600",
-            "6101-6200",
-            "6201-6300",
-            "6301-6400",
-            "6401-6448",
-            "6046-6100",
-            "A001" // 如果有單一特別號碼，直接打入去就得
+            "28601-28613", "28211-28300", "28301-28400", "28401-28500", 
+            "28501-28600", "6101-6200", "6201-6300", "6301-6400", "6401-6448", "6046-6100"
         ];
-
-        // 🔥 2. 系統自動將上面嘅範圍伸展做一個個獨立嘅有效號碼名單
         const validVoucherSet = new Set();
         validVoucherRules.forEach(rule => {
             if (rule.includes('-')) {
                 let parts = rule.split('-');
                 let start = parseInt(parts[0], 10);
                 let end = parseInt(parts[1], 10);
-                for (let i = start; i <= end; i++) {
-                    validVoucherSet.add(i.toString());
-                }
+                for (let i = start; i <= end; i++) validVoucherSet.add(i.toString());
             } else {
                 validVoucherSet.add(rule.trim());
             }
         });
+
+        // 🔥 新增：資料遮蔽 (Data Masking) 工具函數
+        function maskName(name) {
+            if (!name) return '無紀錄';
+            if (name.length <= 1) return name;
+            if (name.length === 2) return name.charAt(0) + '*';
+            // 例如：司徒秀珍 -> 司**珍，陳大文 -> 陳*文
+            return name.charAt(0) + '*'.repeat(name.length - 2) + name.charAt(name.length - 1);
+        }
+
+        function maskPhone(phone) {
+            if (!phone || phone.length < 8) return '無紀錄';
+            // 例如：91234567 -> 9123****
+            return phone.substring(0, 4) + '****';
+        }
 
         function switchScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -241,7 +280,6 @@
             return false;
         }
 
-        // ==================== 會員區邏輯 ====================
         const input = document.getElementById('barcodeInput');
         const voucherInput = document.getElementById('voucherInput');
         let currentTargetRef = null;
@@ -278,17 +316,19 @@
 
                 if (targetData && currentTargetRef) {
                     document.getElementById('resultCard').style.display = "block";
-                    document.getElementById('dispName').innerText = targetData.name;
-                    document.getElementById('dispNo').innerText = targetData.memberNo;
                     
+                    // 🔥 使用遮蔽函數顯示資料
+                    document.getElementById('dispName').innerText = maskName(targetData.name);
+                    document.getElementById('dispNo').innerText = targetData.memberNo;
                     document.getElementById('dispGender').innerText = targetData.gender || '無紀錄';
                     document.getElementById('dispAge').innerText = targetData.age || '無紀錄';
                     
                     document.getElementById('currentLivingStatus').innerText = targetData.livingStatus || "未有資料";
                     document.getElementById('newStatus').value = targetData.livingStatus || "";
                     
-                    document.getElementById('currentPhone').innerText = targetData.phone || "未有資料";
-                    document.getElementById('newPhone').value = targetData.phone || "";
+                    // 🔥 電話號碼遮蔽顯示
+                    document.getElementById('currentPhone').innerText = maskPhone(targetData.phone);
+                    document.getElementById('newPhone').value = ""; // 保持空白等同事入新號碼
 
                     if (targetData.hasClaimed) {
                         document.body.style.backgroundColor = "#ffcdd2";
@@ -342,7 +382,6 @@
                 return;
             }
 
-            // 🔥 3. 核對洗水號是否在有效範圍 (白名單) 內
             if (!validVoucherSet.has(vNo)) {
                 alert(`❌ 無效號碼！\n洗水號 (${vNo}) 不在系統的有效範圍內，請重新核對。`);
                 voucherInput.value = "";
@@ -407,14 +446,17 @@
                 await currentTargetRef.update(updateData);
                 
                 if (newStatus) document.getElementById('currentLivingStatus').innerText = newStatus;
-                if (newPhone) document.getElementById('currentPhone').innerText = newPhone;
+                if (newPhone) {
+                    // 更新成功後，畫面依然顯示遮蔽版本
+                    document.getElementById('currentPhone').innerText = maskPhone(newPhone);
+                    document.getElementById('newPhone').value = "";
+                }
                 
                 alert('✅ 資料已成功更新！');
                 setTimeout(() => voucherInput.focus(), 100);
             } catch (e) { alert('更新失敗：' + e); }
         };
 
-        // ==================== 非會員區邏輯 ====================
         const nmVoucherInput = document.getElementById('nmVoucherInput');
         nmVoucherInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') document.getElementById('nmConfirmBtn').click();
@@ -435,7 +477,6 @@
                 return;
             }
 
-            // 🔥 4. 非會員同樣檢查洗水號是否有效
             if (!validVoucherSet.has(vNo)) {
                 alert(`❌ 無效號碼！\n洗水號 (${vNo}) 不在系統的有效範圍內，請重新核對。`);
                 nmVoucherInput.value = "";
