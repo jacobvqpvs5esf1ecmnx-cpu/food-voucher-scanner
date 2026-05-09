@@ -6,6 +6,11 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     <style>
+        /* 🔥 新增：強制所有元素使用 border-box，解決撐爆外框問題 */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
         body { font-family: 'PingFang HK', 'Microsoft JhengHei', sans-serif; text-align: center; padding: 20px; margin: 0; min-height: 100vh; background-color: #f0f2f5; transition: background-color 0.3s;}
         h1 { color: #333; margin-bottom: 15px;}
         .screen { display: none; } .screen.active { display: block; }
@@ -47,7 +52,7 @@
 
         .nm-form { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); max-width: 600px; margin: auto; }
         .nm-form label { display: block; font-size: 20px; font-weight: bold; text-align: left; margin-top: 15px; color: #333;}
-        .nm-input { font-size: 24px; padding: 12px; width: 90%; border: 2px solid #ccc; border-radius: 10px; margin-top: 8px; outline: none;}
+        .nm-input { font-size: 24px; padding: 12px; width: 100%; border: 2px solid #ccc; border-radius: 10px; margin-top: 8px; outline: none;}
         .nm-input:focus { border-color: #FF9800; }
         
         .text-red { color: #f44336; } .text-orange { color: #ff9800; }
@@ -154,7 +159,7 @@
 
             <div class="voucher-box" style="margin-top: 20px; background: #fff3e0; border-color: #FF9800;">
                 <label class="voucher-label" style="color: #e65100;">🏷️ 請掃描或輸入食物劵洗水號：</label>
-                <input type="text" id="nmVoucherInput" class="nm-input" placeholder="例如: 28601..." style="width: 90%; text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">
+                <input type="text" id="nmVoucherInput" class="nm-input" placeholder="例如: 28601..." style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">
             </div>
             
             <button id="nmConfirmBtn" class="btn btn-confirm" style="background-color: #FF9800; margin-top: 20px;">確認派發</button>
@@ -202,16 +207,11 @@
         }
         updateCounter();
 
-        // 🔥 新增：檢查洗水號防撞機制 Function
         async function isVoucherDuplicated(vNo) {
-            // 檢查會員資料庫有無呢個號碼
             const memSnap = await db.collection('members').where('voucherNo', '==', vNo).get();
             if (!memSnap.empty) return true;
-            
-            // 檢查非會員資料庫有無呢個號碼
             const nmSnap = await db.collection('non_members').where('voucherNo', '==', vNo).get();
             if (!nmSnap.empty) return true;
-
             return false;
         }
 
@@ -321,7 +321,6 @@
             btn.innerText = "核對中...";
 
             try {
-                // 🔥 呼叫防撞機制檢查
                 const isDuplicated = await isVoucherDuplicated(vNo);
                 if (isDuplicated) {
                     alert(`❌ 嚴重錯誤：洗水號 (${vNo}) 已經被其他人領取！\n請檢查是否掃描了上一張已派發的食物劵。`);
@@ -407,7 +406,6 @@
             btn.innerText = "核對中...";
 
             try {
-                // 1. 檢查身份證有無重複領取
                 const nmRef = db.collection('non_members').doc(hkid);
                 const nmDoc = await nmRef.get();
 
@@ -419,7 +417,6 @@
                     return;
                 }
 
-                // 2. 🔥 呼叫防撞機制檢查洗水號
                 const isDuplicated = await isVoucherDuplicated(vNo);
                 if (isDuplicated) {
                     alert(`❌ 嚴重錯誤：洗水號 (${vNo}) 已經被其他人領取！\n請檢查是否掃描了上一張已派發的食物劵。`);
