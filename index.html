@@ -2,15 +2,11 @@
 <html lang="zh-HK">
 <head>
     <meta charset="UTF-8">
-    <title>食物劵派發系統 (防撞洗水號版)</title>
+    <title>食物劵派發系統 (白名單嚴格核對版)</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     <style>
-        /* 🔥 新增：強制所有元素使用 border-box，解決撐爆外框問題 */
-        *, *::before, *::after {
-            box-sizing: border-box;
-        }
-
+        *, *::before, *::after { box-sizing: border-box; }
         body { font-family: 'PingFang HK', 'Microsoft JhengHei', sans-serif; text-align: center; padding: 20px; margin: 0; min-height: 100vh; background-color: #f0f2f5; transition: background-color 0.3s;}
         h1 { color: #333; margin-bottom: 15px;}
         .screen { display: none; } .screen.active { display: block; }
@@ -178,6 +174,36 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
+        // 🔥 1. 在這裡設定你所有的有效洗水號範圍 (可以隨時回來修改)
+        const validVoucherRules = [
+            "28601-28613",
+            "28211-28300",
+            "28301-28400",
+            "28401-28500",
+            "28501-28600",
+            "6101-6200",
+            "6201-6300",
+            "6301-6400",
+            "6401-6448",
+            "6046-6100",
+            "A001" // 如果有單一特別號碼，直接打入去就得
+        ];
+
+        // 🔥 2. 系統自動將上面嘅範圍伸展做一個個獨立嘅有效號碼名單
+        const validVoucherSet = new Set();
+        validVoucherRules.forEach(rule => {
+            if (rule.includes('-')) {
+                let parts = rule.split('-');
+                let start = parseInt(parts[0], 10);
+                let end = parseInt(parts[1], 10);
+                for (let i = start; i <= end; i++) {
+                    validVoucherSet.add(i.toString());
+                }
+            } else {
+                validVoucherSet.add(rule.trim());
+            }
+        });
+
         function switchScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
@@ -316,6 +342,14 @@
                 return;
             }
 
+            // 🔥 3. 核對洗水號是否在有效範圍 (白名單) 內
+            if (!validVoucherSet.has(vNo)) {
+                alert(`❌ 無效號碼！\n洗水號 (${vNo}) 不在系統的有效範圍內，請重新核對。`);
+                voucherInput.value = "";
+                voucherInput.focus();
+                return;
+            }
+
             const btn = document.getElementById('confirmBtn');
             btn.disabled = true;
             btn.innerText = "核對中...";
@@ -397,6 +431,14 @@
             if (phone.length < 8) return alert("⚠️ 電話號碼格式不正確！");
             if (!vNo) {
                 alert("⚠️ 請掃描或輸入食物劵洗水號！");
+                nmVoucherInput.focus();
+                return;
+            }
+
+            // 🔥 4. 非會員同樣檢查洗水號是否有效
+            if (!validVoucherSet.has(vNo)) {
+                alert(`❌ 無效號碼！\n洗水號 (${vNo}) 不在系統的有效範圍內，請重新核對。`);
+                nmVoucherInput.value = "";
                 nmVoucherInput.focus();
                 return;
             }
