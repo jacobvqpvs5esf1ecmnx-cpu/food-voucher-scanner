@@ -2,89 +2,82 @@
 <html lang="zh-HK">
 <head>
     <meta charset="UTF-8">
-    <title>食物劵派發系統 (私隱防護版)</title>
+    <title>食物劵派發系統 (最終防護版)</title>
     <meta name="robots" content="noindex, nofollow">
+    
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    
     <style>
+        /* 解決排版撐爆問題 */
         *, *::before, *::after { box-sizing: border-box; }
+
         body { font-family: 'PingFang HK', 'Microsoft JhengHei', sans-serif; text-align: center; padding: 20px; margin: 0; min-height: 100vh; background-color: #f0f2f5; transition: background-color 0.3s;}
         h1 { color: #333; margin-bottom: 15px;}
         .screen { display: none; } .screen.active { display: block; }
         
-        .login-container { background: white; max-width: 400px; margin: 100px auto; padding: 40px 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        /* 登入畫面 */
+        .login-container { background: white; max-width: 400px; margin: 80px auto; padding: 40px 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
         .login-input { font-size: 24px; padding: 15px; width: 100%; text-align: center; border: 2px solid #ccc; border-radius: 10px; margin-bottom: 20px; outline: none;}
-        .login-input:focus { border-color: #2196F3; }
         .btn-login { background-color: #1976D2; color: white; font-size: 24px; padding: 15px; width: 100%; border: none; border-radius: 10px; cursor: pointer; font-weight: bold;}
-        .btn-login:hover { background-color: #1565C0; }
 
+        /* 進度儀表板 */
+        #dashboard { display: none; background-color: #333; color: white; padding: 15px 40px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); text-align: center; }
+        .dash-stats { font-size: 24px; font-weight: bold; }
+        .text-blue { color: #42A5F5; } .text-orange { color: #FFCA28; } .text-green { color: #66BB6A; }
+        
+        /* 選單與按鈕 */
         .menu-btn { font-size: 35px; padding: 30px; margin: 15px; width: 40%; border-radius: 20px; border: none; cursor: pointer; font-weight: bold; box-shadow: 0 10px 20px rgba(0,0,0,0.1); transition: transform 0.2s;}
-        .menu-btn:hover { transform: scale(1.05); }
         .btn-member { background-color: #2196F3; color: white; }
         .btn-nonmember { background-color: #FF9800; color: white; }
         .back-btn { position: absolute; top: 20px; left: 20px; font-size: 18px; padding: 10px 20px; background: #607D8B; color: white; border: none; border-radius: 10px; cursor: pointer;}
         
-        #dashboard { display: none; background-color: #333; color: white; padding: 15px 40px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); text-align: center; }
-        .dash-title { font-size: 18px; color: #ccc; margin-bottom: 5px; }
-        .dash-stats { font-size: 24px; font-weight: bold; margin-bottom: 5px; }
-        .dash-total { font-size: 16px; color: #aaa; border-top: 1px solid #555; padding-top: 5px; margin-top: 5px; }
-        .text-blue { color: #42A5F5; } .text-orange { color: #FFCA28; } .text-green { color: #66BB6A; }
-        
+        /* 輸入框與結果卡片 */
         .main-input { font-size: 26px; padding: 15px; width: 100%; text-align: center; border: 3px solid #ccc; border-radius: 10px; outline: none; text-transform: uppercase;}
-        .main-input:focus { border-color: #2196F3; box-shadow: 0 0 10px rgba(33, 150, 243, 0.3); }
-        
         .result-card { display: none; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); max-width: 800px; margin: auto; }
         .status-msg { font-size: 35px; font-weight: bold; margin-bottom: 10px; }
-        .member-name { font-size: 45px; font-weight: bold; margin-bottom: 5px; color: #000; }
-        .member-info-row { font-size: 22px; color: #555; margin-bottom: 15px; background: #f1f8e9; padding: 10px; border-radius: 10px;}
+        .member-name { font-size: 55px; font-weight: bold; margin-bottom: 5px; color: #000; }
+        .member-id-tag { font-size: 24px; color: #666; margin-bottom: 20px; display: block;}
         
-        .update-box { margin-top: 10px; padding: 15px; border: 2px dashed #90CAF9; font-size: 18px; text-align: left; background: #FAFAFA; border-radius: 10px; color: #333;}
-        .update-row { margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .status-select { font-size: 18px; padding: 6px; border-radius: 5px; border: 1px solid #ccc;}
-        .btn-update { padding: 8px 20px; background: #1976D2; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 18px; font-weight: bold;}
-        .btn-update:hover { background: #1565C0; }
+        /* 資料更新區 */
+        .update-box { margin-top: 10px; padding: 15px; border: 2px dashed #90CAF9; font-size: 20px; text-align: left; background: #FAFAFA; border-radius: 10px;}
+        .update-row { margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .status-select { font-size: 20px; padding: 8px; border-radius: 8px; border: 1px solid #ccc; width: 200px;}
+        .btn-update { padding: 10px 25px; background: #1976D2; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 18px; font-weight: bold;}
         
-        .voucher-box { margin-top: 15px; padding: 20px; background: #e3f2fd; border: 2px solid #2196F3; border-radius: 15px;}
-        .voucher-label { font-size: 22px; font-weight: bold; color: #1565c0; display: block; margin-bottom: 10px;}
+        /* 洗水號輸入區 */
+        .voucher-box { margin-top: 20px; padding: 20px; background: #e3f2fd; border: 2px solid #2196F3; border-radius: 15px;}
+        .btn-confirm { background-color: #4CAF50; color: white; width: 100%; font-size: 30px; padding: 15px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; margin-top: 20px;}
+        .btn-cancel { background-color: #9e9e9e; color: white; font-size: 20px; width: 100%; padding: 10px; border: none; border-radius: 10px; cursor: pointer; margin-top: 10px;}
         
-        .btn-group { margin-top: 20px; }
-        .btn { font-size: 28px; padding: 15px 40px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; margin: 5px; }
-        .btn-confirm { background-color: #4CAF50; color: white; width: 100%; margin-bottom: 10px;}
-        .btn-confirm:hover { background-color: #45a049; }
-        .btn-cancel { background-color: #9e9e9e; color: white; font-size: 20px; width: 100%;}
-
+        /* 非會員表單 */
         .nm-form { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); max-width: 600px; margin: auto; }
         .nm-form label { display: block; font-size: 20px; font-weight: bold; text-align: left; margin-top: 15px; color: #333;}
         .nm-input { font-size: 24px; padding: 12px; width: 100%; border: 2px solid #ccc; border-radius: 10px; margin-top: 8px; outline: none;}
-        .nm-input:focus { border-color: #FF9800; }
-        
-        .text-red { color: #f44336; } .text-orange { color: #ff9800; }
+
+        .text-red { color: #f44336; } .text-green { color: #4CAF50; } .text-orange { color: #FF9800; }
     </style>
 </head>
 <body>
 
     <div id="screen-login" class="screen active">
         <div class="login-container">
-            <h1 style="font-size: 30px; color: #1565c0;">🔒 系統登入</h1>
-            <p style="color: #666; margin-bottom: 20px;">請輸入職員專用密碼進入系統</p>
+            <h1 style="font-size: 30px; color: #1565c0;">🔒 職員系統登入</h1>
             <input type="password" id="loginPwd" class="login-input" placeholder="輸入密碼...">
             <button onclick="checkLogin()" class="btn-login">進入系統</button>
         </div>
     </div>
 
     <div id="dashboard">
-        <div class="dash-title">📊 派發進度總覽</div>
         <div class="dash-stats">
-            會員：<span id="memberCount" class="text-blue">--</span> / 650 &nbsp;&nbsp;|&nbsp;&nbsp; 
-            非會員：<span id="nonMemberCount" class="text-orange">--</span> / 150
-        </div>
-        <div class="dash-total">
-            總共已派發：<span id="totalCount" class="text-green" style="font-weight:bold; font-size:22px;">--</span> / 800
+            會員：<span id="memberCount" class="text-blue">--</span> / 650 &nbsp;|&nbsp; 
+            非會員：<span id="nonMemberCount" class="text-orange">--</span> / 150 &nbsp;|&nbsp;
+            已派總數：<span id="totalCount" class="text-green">--</span> / 800
         </div>
     </div><br>
 
     <div id="screen-home" class="screen">
-        <h1 style="font-size: 45px;">請選擇領取者類別</h1>
+        <h1>請選擇領取者類別</h1>
         <button class="menu-btn btn-member" onclick="switchScreen('screen-member')">👤 中心會員</button>
         <button class="menu-btn btn-nonmember" onclick="switchScreen('screen-nonmember')">🚶 非會員</button>
     </div>
@@ -92,115 +85,84 @@
     <div id="screen-member" class="screen">
         <button class="back-btn" onclick="switchScreen('screen-home')">🔙 返回主頁</button>
         <h1>🎁 會員食物劵派發</h1>
-        
-        <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 20px; max-width: 600px; margin-left: auto; margin-right: auto;">
-            <input type="text" id="barcodeInput" class="main-input" placeholder="請掃描會員證或輸入編號..." autocomplete="off" oninput="this.value = this.value.toUpperCase()">
-            <button id="searchMemberBtn" class="btn-update" style="font-size: 24px; padding: 15px 30px; margin-left: 10px; background-color: #607D8B; border-radius: 10px; border:none;">搜尋</button>
+        <div style="display: flex; justify-content: center; max-width: 600px; margin: 0 auto 20px auto;">
+            <input type="text" id="barcodeInput" class="main-input" placeholder="掃描會員證或輸入編號..." oninput="this.value = this.value.toUpperCase()">
+            <button id="searchMemberBtn" style="padding:0 20px; margin-left:10px; border-radius:10px; border:none; background:#607D8B; color:white; font-size:20px; cursor:pointer;">搜尋</button>
         </div>
         
         <div id="resultCard" class="result-card">
             <div id="statusMsg" class="status-msg"></div>
             <div class="member-name" id="dispName"></div>
-            <div class="member-info-row">
-                編號: <b id="dispNo"></b> &nbsp;|&nbsp; 
-                性別: <b id="dispGender"></b> &nbsp;|&nbsp; 
-                年齡: <b id="dispAge"></b>
-            </div>
+            <b class="member-id-tag" id="dispNo"></b>
             
             <div class="update-box">
-                <div style="color: #1976D2; font-weight: bold; margin-bottom: 10px;">📋 快速更新會員資料 (如有需要)</div>
+                <div style="color: #1976D2; font-weight: bold; margin-bottom: 10px;">📋 資料更新 (如有需要)</div>
                 <div class="update-row">
-                    <span>系統居住狀況：<b id="currentLivingStatus" style="color:#E91E63;">未有資料</b></span>
-                    <span>
-                        更改為：
-                        <select id="newStatus" class="status-select">
-                            <option value="">(保持不變)</option>
-                            <option value="獨居">獨居</option>
-                            <option value="雙老">雙老</option>
-                            <option value="全老戶">全老戶</option>
-                            <option value="與家人同住">與家人同住</option>
-                            <option value="其他">其他</option>
-                        </select>
-                    </span>
+                    <span>居住狀況：</span>
+                    <select id="newStatus" class="status-select">
+                        <option value="">(保持不變)</option>
+                        <option value="獨居">獨居</option>
+                        <option value="雙老">雙老</option>
+                        <option value="全老戶">全老戶</option>
+                        <option value="其他">其他</option>
+                    </select>
                 </div>
                 <div class="update-row">
-                    <span>系統電話：<b id="currentPhone" style="color:#E91E63;">未有資料</b></span>
-                    <span>
-                        更改為：<input type="tel" id="newPhone" class="status-select" placeholder="新電話..." maxlength="8" style="width: 120px;">
-                    </span>
+                    <span>新聯絡電話：</span>
+                    <input type="tel" id="newPhone" class="status-select" placeholder="輸入 8 位電話" maxlength="8">
                 </div>
-                <div style="text-align: right; margin-top: 10px;">
-                    <button onclick="updateMemberInfo()" class="btn-update">💾 儲存更新資料</button>
+                <div style="text-align: right;">
+                    <button onclick="updateMemberInfo()" class="btn-update">💾 儲存更新</button>
                 </div>
             </div>
             
             <div class="voucher-box" id="voucherSection">
-                <label class="voucher-label">🏷️ 請掃描或輸入食物劵洗水號：</label>
-                <input type="text" id="voucherInput" class="main-input" placeholder="例如: 28601..." autocomplete="off" oninput="this.value = this.value.toUpperCase()">
+                <label style="font-size: 22px; font-weight: bold; color: #1565c0; display: block; margin-bottom: 10px;">🏷️ 請掃描食物劵洗水號：</label>
+                <input type="text" id="voucherInput" class="main-input" placeholder="例如: 28601..." oninput="this.value = this.value.toUpperCase()">
             </div>
             
-            <div class="btn-group">
-                <button id="confirmBtn" class="btn btn-confirm">確認派發</button>
-                <button id="cancelBtn" class="btn btn-cancel">取消 / 下一位</button>
-            </div>
+            <button id="confirmBtn" class="btn-confirm">確認派發</button>
+            <button id="cancelBtn" class="btn-cancel">取消 / 下一位</button>
         </div>
     </div>
 
     <div id="screen-nonmember" class="screen">
         <button class="back-btn" onclick="switchScreen('screen-home')">🔙 返回主頁</button>
         <h1>🚶 非會員登記</h1>
-        
         <div class="nm-form">
-            <label>姓名：</label>
-            <input type="text" id="nmName" class="nm-input" placeholder="輸入姓名...">
-            <label>身份證號碼：</label>
-            <input type="text" id="nmHkid" class="nm-input" placeholder="例：A1234567" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">
-            <label>電話號碼：</label>
-            <input type="tel" id="nmPhone" class="nm-input" placeholder="輸入8位數字電話..." maxlength="8">
+            <label>姓名：</label><input type="text" id="nmName" class="nm-input" placeholder="全名">
+            <label>身份證：</label><input type="text" id="nmHkid" class="nm-input" placeholder="身份證" oninput="this.value = this.value.toUpperCase()">
+            <label>電話：</label><input type="tel" id="nmPhone" class="nm-input" placeholder="電話" maxlength="8">
             <label>居住狀況：</label>
-            <select id="nmLivingStatus" class="nm-input" style="height: 55px; background: white;">
-                <option value="獨居">獨居</option>
-                <option value="雙老">雙老</option>
-                <option value="全老戶">全老戶</option>
-                <option value="與家人同住">與家人同住</option>
-                <option value="其他">其他</option>
+            <select id="nmLivingStatus" class="nm-input" style="height: 50px;">
+                <option value="獨居">獨居</option><option value="雙老">雙老</option><option value="全老戶">全老戶</option><option value="其他">其他</option>
             </select>
-            <div class="voucher-box" style="margin-top: 20px; background: #fff3e0; border-color: #FF9800;">
-                <label class="voucher-label" style="color: #e65100;">🏷️ 請掃描或輸入食物劵洗水號：</label>
-                <input type="text" id="nmVoucherInput" class="nm-input" placeholder="例如: 28601..." style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">
+            <div class="voucher-box" style="background: #fff3e0; border-color: #FF9800;">
+                <label style="color: #e65100; font-weight:bold;">🏷️ 食物劵洗水號：</label>
+                <input type="text" id="nmVoucherInput" class="nm-input" placeholder="洗水號" oninput="this.value = this.value.toUpperCase()">
             </div>
-            <button id="nmConfirmBtn" class="btn btn-confirm" style="background-color: #FF9800; margin-top: 20px;">確認派發</button>
+            <button id="nmConfirmBtn" class="btn-confirm" style="background:#FF9800;">確認派發</button>
         </div>
     </div>
 
     <script>
+        // 1. 職員登入設定
         const STAFF_PASSWORD = "CWD2026"; 
-
-        document.getElementById('loginPwd').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') checkLogin();
-        });
-
         function checkLogin() {
-            const pwd = document.getElementById('loginPwd').value;
-            if (pwd === STAFF_PASSWORD) {
+            if (document.getElementById('loginPwd').value === STAFF_PASSWORD) {
                 sessionStorage.setItem('isStaffLoggedIn', 'true');
                 showMainSystem();
-            } else {
-                alert('❌ 密碼錯誤！請聯絡負責人。');
-                document.getElementById('loginPwd').value = '';
-            }
+            } else { alert('❌ 密碼錯誤'); }
         }
-
         function showMainSystem() {
             document.getElementById('screen-login').classList.remove('active');
             document.getElementById('screen-home').classList.add('active');
             document.getElementById('dashboard').style.display = 'inline-block';
         }
+        if (sessionStorage.getItem('isStaffLoggedIn') === 'true') showMainSystem();
+        document.getElementById('loginPwd').onkeypress = e => { if(e.key==='Enter') checkLogin(); };
 
-        if (sessionStorage.getItem('isStaffLoggedIn') === 'true') {
-            showMainSystem();
-        }
-
+        // 2. Firebase 初始化
         const firebaseConfig = {
             apiKey: "AIzaSyBkYaOS6YFapXxt4UTwTy3bkK-C_f50hWw",
             authDomain: "food-voucher-2026.firebaseapp.com",
@@ -212,336 +174,138 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        const validVoucherRules = [
-            "28601-28613", "28211-28300", "28301-28400", "28401-28500", 
-            "28501-28600", "6101-6200", "6201-6300", "6301-6400", "6401-6448", "6046-6100"
-        ];
+        // 3. 私隱防護：姓名遮蔽函數
+        function maskName(name) {
+            if (!name || name.length < 2) return name;
+            return name.charAt(0) + "*".repeat(name.length - 2) + name.charAt(name.length - 1);
+        }
+
+        // 4. 洗水號白名單設定
+        const validVoucherRules = ["28601-28613", "28211-28300", "28301-28400", "28401-28500", "28501-28600", "6101-6200", "6201-6300", "6301-6400", "6401-6448", "6046-6100"];
         const validVoucherSet = new Set();
-        validVoucherRules.forEach(rule => {
-            if (rule.includes('-')) {
-                let parts = rule.split('-');
-                let start = parseInt(parts[0], 10);
-                let end = parseInt(parts[1], 10);
-                for (let i = start; i <= end; i++) validVoucherSet.add(i.toString());
-            } else {
-                validVoucherSet.add(rule.trim());
-            }
+        validVoucherRules.forEach(r => {
+            if (r.includes('-')) {
+                let p = r.split('-');
+                for (let i = parseInt(p[0]); i <= parseInt(p[1]); i++) validVoucherSet.add(i.toString());
+            } else validVoucherSet.add(r);
         });
 
-        // 🔥 新增：資料遮蔽 (Data Masking) 工具函數
-        function maskName(name) {
-            if (!name) return '無紀錄';
-            if (name.length <= 1) return name;
-            if (name.length === 2) return name.charAt(0) + '*';
-            // 例如：司徒秀珍 -> 司**珍，陳大文 -> 陳*文
-            return name.charAt(0) + '*'.repeat(name.length - 2) + name.charAt(name.length - 1);
-        }
-
-        function maskPhone(phone) {
-            if (!phone || phone.length < 8) return '無紀錄';
-            // 例如：91234567 -> 9123****
-            return phone.substring(0, 4) + '****';
-        }
-
-        function switchScreen(screenId) {
+        // 5. 系統邏輯
+        function switchScreen(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
-            document.body.style.backgroundColor = "#f0f2f5";
-            
-            if (screenId === 'screen-member') {
-                document.getElementById('barcodeInput').value = '';
-                document.getElementById('resultCard').style.display = 'none';
-                setTimeout(() => document.getElementById('barcodeInput').focus(), 100);
-            } else if (screenId === 'screen-nonmember') {
-                ['nmName', 'nmHkid', 'nmPhone', 'nmVoucherInput'].forEach(id => document.getElementById(id).value = '');
-                document.getElementById('nmLivingStatus').selectedIndex = 0; 
-                setTimeout(() => document.getElementById('nmName').focus(), 100);
-            }
+            document.getElementById(id).classList.add('active');
+            if (id === 'screen-member') setTimeout(() => document.getElementById('barcodeInput').focus(), 100);
+            if (id === 'screen-nonmember') setTimeout(() => document.getElementById('nmName').focus(), 100);
         }
 
         function updateCounter() {
-            db.collection('members').where('hasClaimed', '==', true).onSnapshot(snap1 => {
-                let memCount = snap1.size;
-                document.getElementById('memberCount').innerText = memCount;
-                db.collection('non_members').onSnapshot(snap2 => {
-                    let nonMemCount = snap2.size;
-                    document.getElementById('nonMemberCount').innerText = nonMemCount;
-                    document.getElementById('totalCount').innerText = memCount + nonMemCount;
+            db.collection('members').where('hasClaimed', '==', true).onSnapshot(s1 => {
+                db.collection('non_members').onSnapshot(s2 => {
+                    document.getElementById('memberCount').innerText = s1.size;
+                    document.getElementById('nonMemberCount').innerText = s2.size;
+                    document.getElementById('totalCount').innerText = s1.size + s2.size;
                 });
             });
         }
         updateCounter();
 
-        async function isVoucherDuplicated(vNo) {
-            const memSnap = await db.collection('members').where('voucherNo', '==', vNo).get();
-            if (!memSnap.empty) return true;
-            const nmSnap = await db.collection('non_members').where('voucherNo', '==', vNo).get();
-            if (!nmSnap.empty) return true;
-            return false;
-        }
-
-        const input = document.getElementById('barcodeInput');
-        const voucherInput = document.getElementById('voucherInput');
-        let currentTargetRef = null;
-
-        document.addEventListener('click', (e) => { 
-            if(document.getElementById('screen-member').classList.contains('active') && 
-               e.target.tagName !== 'BUTTON' && e.target.tagName !== 'SELECT' && e.target.tagName !== 'INPUT') {
-                input.focus(); 
-            }
-        });
-
         async function performSearch() {
-            const inputValue = input.value.trim().toUpperCase(); 
-            input.value = "";
-            if (!inputValue) return;
-
+            const val = document.getElementById('barcodeInput').value.trim().toUpperCase();
+            document.getElementById('barcodeInput').value = "";
+            if (!val) return;
             document.getElementById('resultCard').style.display = "none";
             document.body.style.backgroundColor = "#f0f2f5";
             currentTargetRef = null;
 
             try {
-                let targetData = null;
-                const docSnap = await db.collection('members').doc(inputValue).get();
-                if (docSnap.exists) {
-                    currentTargetRef = db.collection('members').doc(inputValue);
-                    targetData = docSnap.data();
-                } else {
-                    const querySnap = await db.collection('members').where('memberNo', '==', inputValue).get();
-                    if (!querySnap.empty) {
-                        currentTargetRef = querySnap.docs[0].ref;
-                        targetData = querySnap.docs[0].data();
-                    }
+                let snap = await db.collection('members').doc(val).get();
+                if (!snap.exists) {
+                    let q = await db.collection('members').where('memberNo', '==', val).get();
+                    if (!q.empty) snap = q.docs[0];
                 }
 
-                if (targetData && currentTargetRef) {
+                if (snap.exists) {
+                    currentTargetRef = snap.ref;
+                    const data = snap.data();
                     document.getElementById('resultCard').style.display = "block";
+                    document.getElementById('dispName').innerText = maskName(data.name);
+                    document.getElementById('dispNo').innerText = "會員編號: " + data.memberNo;
                     
-                    // 🔥 使用遮蔽函數顯示資料
-                    document.getElementById('dispName').innerText = maskName(targetData.name);
-                    document.getElementById('dispNo').innerText = targetData.memberNo;
-                    document.getElementById('dispGender').innerText = targetData.gender || '無紀錄';
-                    document.getElementById('dispAge').innerText = targetData.age || '無紀錄';
-                    
-                    document.getElementById('currentLivingStatus').innerText = targetData.livingStatus || "未有資料";
-                    document.getElementById('newStatus').value = targetData.livingStatus || "";
-                    
-                    // 🔥 電話號碼遮蔽顯示
-                    document.getElementById('currentPhone').innerText = maskPhone(targetData.phone);
-                    document.getElementById('newPhone').value = ""; // 保持空白等同事入新號碼
-
-                    if (targetData.hasClaimed) {
+                    if (data.hasClaimed) {
                         document.body.style.backgroundColor = "#ffcdd2";
-                        let timeStr = formatTime(targetData.claimTime);
-                        document.getElementById('statusMsg').innerHTML = `⚠️ 此會員已領取！<br><span style="font-size:20px; color:#333;">領取時間：${timeStr}<br>洗水號：${targetData.voucherNo || '無'}</span>`;
-                        document.getElementById('statusMsg').className = "text-red";
-                        document.getElementById('confirmBtn').style.display = "none"; 
+                        document.getElementById('statusMsg').innerHTML = `<span class="text-red">⚠️ 此會員已領取</span><br><small>洗水號: ${data.voucherNo}</small>`;
+                        document.getElementById('confirmBtn').style.display = "none";
                         document.getElementById('voucherSection').style.display = "none";
                     } else {
                         document.body.style.backgroundColor = "#c8e6c9";
-                        document.getElementById('statusMsg').innerText = "✅ 資格確認：未領取";
-                        document.getElementById('statusMsg').className = "text-green";
-                        document.getElementById('confirmBtn').style.display = "block"; 
-                        document.getElementById('confirmBtn').disabled = false;
-                        
+                        document.getElementById('statusMsg').innerHTML = `<span class="text-green">✅ 資格確認：未領取</span>`;
+                        document.getElementById('confirmBtn').style.display = "block";
                         document.getElementById('voucherSection').style.display = "block";
-                        voucherInput.value = "";
-                        setTimeout(() => voucherInput.focus(), 100);
+                        document.getElementById('voucherInput').value = "";
+                        setTimeout(() => document.getElementById('voucherInput').focus(), 100);
                     }
-                } else {
-                    document.body.style.backgroundColor = "#ffe0b2";
-                    document.getElementById('resultCard').style.display = "block";
-                    document.getElementById('dispName').innerText = "查無此人";
-                    document.getElementById('dispNo').innerText = inputValue;
-                    document.getElementById('dispGender').innerText = "--";
-                    document.getElementById('dispAge').innerText = "--";
-                    document.getElementById('currentLivingStatus').innerText = "--";
-                    document.getElementById('currentPhone').innerText = "--";
-                    document.getElementById('statusMsg').innerText = "⚠️ 找不到此條碼或編號";
-                    document.getElementById('statusMsg').className = "text-orange";
-                    document.getElementById('confirmBtn').style.display = "none";
-                    document.getElementById('voucherSection').style.display = "none";
-                }
-            } catch (error) { alert("查詢錯誤：" + error); }
+                } else { alert("查無此人"); }
+            } catch (e) { alert(e); }
         }
 
-        input.addEventListener('keypress', (e) => { if (e.key === 'Enter') performSearch(); });
-        document.getElementById('searchMemberBtn').addEventListener('click', performSearch);
-
-        voucherInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') document.getElementById('confirmBtn').click();
-        });
+        document.getElementById('searchMemberBtn').onclick = performSearch;
+        document.getElementById('barcodeInput').onkeypress = e => { if(e.key==='Enter') performSearch(); };
+        document.getElementById('voucherInput').onkeypress = e => { if(e.key==='Enter') document.getElementById('confirmBtn').click(); };
+        document.getElementById('nmVoucherInput').onkeypress = e => { if(e.key==='Enter') document.getElementById('nmConfirmBtn').click(); };
 
         document.getElementById('confirmBtn').onclick = async () => {
-            if (!currentTargetRef) return;
+            const v = document.getElementById('voucherInput').value.trim();
+            if (!validVoucherSet.has(v)) return alert("❌ 洗水號無效！不在發放範圍內。");
+            const dup1 = await db.collection('members').where('voucherNo', '==', v).get();
+            const dup2 = await db.collection('non_members').where('voucherNo', '==', v).get();
+            if (!dup1.empty || !dup2.empty) return alert("❌ 警告：此洗水號已被使用！");
+
+            await currentTargetRef.update({ hasClaimed: true, claimTime: new Date().toISOString(), voucherNo: v });
+            document.body.style.backgroundColor = "#4CAF50";
+            document.getElementById('statusMsg').innerHTML = "✅ 成功紀錄！請交出食物劵。";
+            document.getElementById('confirmBtn').style.display = "none";
+            document.getElementById('voucherSection').style.display = "none";
+            setTimeout(() => document.getElementById('barcodeInput').focus(), 1500);
+        };
+
+        window.updateMemberInfo = async function() {
+            const s = document.getElementById('newStatus').value;
+            const p = document.getElementById('newPhone').value.trim();
+            if(!s && !p) return alert("請先填寫要更新的資料");
+            let up = { statusUpdateTime: new Date().toISOString() };
+            if (s) up.livingStatus = s;
+            if (p) up.updatedPhone = p;
+            await currentTargetRef.update(up);
+            alert("✅ 資料已儲存，將會反映在匯出報告中。");
+        };
+
+        document.getElementById('nmConfirmBtn').onclick = async () => {
+            const name = document.getElementById('nmName').value.trim();
+            const hkid = document.getElementById('nmHkid').value.trim().toUpperCase();
+            const p = document.getElementById('nmPhone').value.trim();
+            const s = document.getElementById('nmLivingStatus').value;
+            const v = document.getElementById('nmVoucherInput').value.trim();
+
+            if(!name || !hkid || !p || !v) return alert("請填寫所有欄位");
+            if (!validVoucherSet.has(v)) return alert("❌ 洗水號無效！");
             
-            const vNo = voucherInput.value.trim();
-            if (!vNo) {
-                alert("⚠️ 請掃描或輸入食物劵洗水號！");
-                voucherInput.focus();
-                return;
-            }
+            const dupHkid = await db.collection('non_members').doc(hkid).get();
+            if (dupHkid.exists) return alert("❌ 此身份證已登記領取過！");
+            
+            const dupV1 = await db.collection('members').where('voucherNo', '==', v).get();
+            const dupV2 = await db.collection('non_members').where('voucherNo', '==', v).get();
+            if (!dupV1.empty || !dupV2.empty) return alert("❌ 此洗水號已被使用！");
 
-            if (!validVoucherSet.has(vNo)) {
-                alert(`❌ 無效號碼！\n洗水號 (${vNo}) 不在系統的有效範圍內，請重新核對。`);
-                voucherInput.value = "";
-                voucherInput.focus();
-                return;
-            }
-
-            const btn = document.getElementById('confirmBtn');
-            btn.disabled = true;
-            btn.innerText = "核對中...";
-
-            try {
-                const isDuplicated = await isVoucherDuplicated(vNo);
-                if (isDuplicated) {
-                    alert(`❌ 嚴重錯誤：洗水號 (${vNo}) 已經被其他人領取！\n請檢查是否掃描了上一張已派發的食物劵。`);
-                    btn.disabled = false;
-                    btn.innerText = "確認派發";
-                    voucherInput.value = "";
-                    voucherInput.focus();
-                    return;
-                }
-
-                await currentTargetRef.update({
-                    hasClaimed: true,
-                    claimTime: new Date().toISOString(),
-                    voucherNo: vNo 
-                });
-                document.body.style.backgroundColor = "#4CAF50"; 
-                document.getElementById('statusMsg').innerText = `✅ 成功紀錄！\n食物劵 (${vNo}) 已派發。`;
-                document.getElementById('statusMsg').className = "text-green";
-                btn.style.display = "none";
-                document.getElementById('voucherSection').style.display = "none";
-                setTimeout(() => input.focus(), 1500); 
-            } catch (e) {
-                alert("錯誤：" + e);
-                btn.disabled = false;
-                btn.innerText = "確認派發";
-            }
+            await db.collection('non_members').doc(hkid).set({ name, hkid, phone: p, livingStatus: s, voucherNo: v, claimTime: new Date().toISOString() });
+            alert("✅ 非會員登記成功！");
+            switchScreen('screen-home');
         };
 
         document.getElementById('cancelBtn').onclick = () => {
             document.getElementById('resultCard').style.display = "none";
             document.body.style.backgroundColor = "#f0f2f5";
-            input.focus();
+            document.getElementById('barcodeInput').focus();
         };
-
-        window.updateMemberInfo = async function() {
-            if (!currentTargetRef) return;
-            const newStatus = document.getElementById('newStatus').value;
-            const newPhone = document.getElementById('newPhone').value.trim();
-
-            if (newPhone && newPhone.length < 8) {
-                alert("⚠️ 電話號碼格式似乎不正確！");
-                return;
-            }
-
-            try {
-                let updateData = { statusUpdateTime: new Date().toISOString() };
-                if (newStatus) updateData.livingStatus = newStatus;
-                if (newPhone) updateData.phone = newPhone;
-
-                await currentTargetRef.update(updateData);
-                
-                if (newStatus) document.getElementById('currentLivingStatus').innerText = newStatus;
-                if (newPhone) {
-                    // 更新成功後，畫面依然顯示遮蔽版本
-                    document.getElementById('currentPhone').innerText = maskPhone(newPhone);
-                    document.getElementById('newPhone').value = "";
-                }
-                
-                alert('✅ 資料已成功更新！');
-                setTimeout(() => voucherInput.focus(), 100);
-            } catch (e) { alert('更新失敗：' + e); }
-        };
-
-        const nmVoucherInput = document.getElementById('nmVoucherInput');
-        nmVoucherInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') document.getElementById('nmConfirmBtn').click();
-        });
-
-        document.getElementById('nmConfirmBtn').onclick = async () => {
-            const name = document.getElementById('nmName').value.trim();
-            const hkid = document.getElementById('nmHkid').value.trim().toUpperCase(); 
-            const phone = document.getElementById('nmPhone').value.trim();
-            const livingStatus = document.getElementById('nmLivingStatus').value; 
-            const vNo = nmVoucherInput.value.trim();
-
-            if (!name || !hkid || !phone) return alert("⚠️ 請填寫完整姓名、身份證及電話！");
-            if (phone.length < 8) return alert("⚠️ 電話號碼格式不正確！");
-            if (!vNo) {
-                alert("⚠️ 請掃描或輸入食物劵洗水號！");
-                nmVoucherInput.focus();
-                return;
-            }
-
-            if (!validVoucherSet.has(vNo)) {
-                alert(`❌ 無效號碼！\n洗水號 (${vNo}) 不在系統的有效範圍內，請重新核對。`);
-                nmVoucherInput.value = "";
-                nmVoucherInput.focus();
-                return;
-            }
-
-            const btn = document.getElementById('nmConfirmBtn');
-            btn.disabled = true;
-            btn.innerText = "核對中...";
-
-            try {
-                const nmRef = db.collection('non_members').doc(hkid);
-                const nmDoc = await nmRef.get();
-
-                if (nmDoc.exists) {
-                    document.body.style.backgroundColor = "#ffcdd2";
-                    alert(`❌ 警告：此身份證號碼 (${hkid}) 已經領取過！`);
-                    btn.disabled = false;
-                    btn.innerText = "確認派發";
-                    return;
-                }
-
-                const isDuplicated = await isVoucherDuplicated(vNo);
-                if (isDuplicated) {
-                    alert(`❌ 嚴重錯誤：洗水號 (${vNo}) 已經被其他人領取！\n請檢查是否掃描了上一張已派發的食物劵。`);
-                    btn.disabled = false;
-                    btn.innerText = "確認派發";
-                    nmVoucherInput.value = "";
-                    nmVoucherInput.focus();
-                    return;
-                }
-
-                await nmRef.set({
-                    name: name,
-                    hkid: hkid,
-                    phone: phone,
-                    livingStatus: livingStatus,
-                    voucherNo: vNo,
-                    isMember: false,
-                    hasClaimed: true,
-                    claimTime: new Date().toISOString()
-                });
-
-                document.body.style.backgroundColor = "#4CAF50";
-                alert(`✅ 非會員紀錄成功！\n食物劵 (${vNo}) 已派發。`);
-                
-                setTimeout(() => {
-                    switchScreen('screen-home');
-                    btn.disabled = false;
-                    btn.innerText = "確認派發";
-                }, 1500);
-
-            } catch (e) {
-                alert("錯誤：" + e);
-                btn.disabled = false;
-                btn.innerText = "確認派發";
-            }
-        };
-
-        function formatTime(isoStr) {
-            if (!isoStr) return '未知';
-            const d = new Date(isoStr);
-            return `${d.getMonth()+1}月${d.getDate()}日 ${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`;
-        }
     </script>
 </body>
 </html>
