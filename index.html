@@ -2,7 +2,7 @@
 <html lang="zh-HK">
 <head>
     <meta charset="UTF-8">
-    <title>食物劵派發系統 (最終防護版)</title>
+    <title>食物劵派發系統 (年齡提示及居住狀況更新版)</title>
     <meta name="robots" content="noindex, nofollow">
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
@@ -38,6 +38,11 @@
         .status-msg { font-size: 35px; font-weight: bold; margin-bottom: 10px; }
         .member-name { font-size: 55px; font-weight: bold; margin-bottom: 5px; color: #000; }
         .member-id-tag { font-size: 24px; color: #666; margin-bottom: 20px; display: block;}
+        
+        /* 年齡警告框 */
+        #ageWarningMsg { display: none; background: #ffebee; border: 2px solid #f44336; color: #c62828; padding: 15px; border-radius: 10px; margin-bottom: 15px; text-align: left; }
+        .warning-title { font-size: 22px; font-weight: bold; margin-bottom: 8px; display: block;}
+        .warning-text { font-size: 16px; line-height: 1.5; margin: 0;}
         
         /* 資料更新區 */
         .update-box { margin-top: 10px; padding: 15px; border: 2px dashed #90CAF9; font-size: 20px; text-align: left; background: #FAFAFA; border-radius: 10px;}
@@ -86,12 +91,22 @@
         <button class="back-btn" onclick="switchScreen('screen-home')">🔙 返回主頁</button>
         <h1>🎁 會員食物劵派發</h1>
         <div style="display: flex; justify-content: center; max-width: 600px; margin: 0 auto 20px auto;">
-            <input type="text" id="barcodeInput" class="main-input" placeholder="掃描會員證或輸入編號..." oninput="this.value = this.value.toUpperCase()">
+            <input type="text" id="barcodeInput" class="main-input" placeholder="掃描會員證或輸入編號..." autocomplete="off" oninput="this.value = this.value.toUpperCase()">
             <button id="searchMemberBtn" style="padding:0 20px; margin-left:10px; border-radius:10px; border:none; background:#607D8B; color:white; font-size:20px; cursor:pointer;">搜尋</button>
         </div>
         
         <div id="resultCard" class="result-card">
             <div id="statusMsg" class="status-msg"></div>
+            
+            <div id="ageWarningMsg">
+                <span class="warning-title">⚠️ 系統提示：此會員年齡未滿 60 歲</span>
+                <p class="warning-text">受惠長者需為香港居民，並符合以下 <b>任何一項</b> 條件：<br>
+                1. <b>60歲或以上：</b> 持有有效身分證明文件<br>
+                2. <b>獨居長者：</b> 獨自居住的長者<br>
+                3. <b>雙老住戶：</b> 兩位皆為60歲或以上的長者同住<br>
+                4. <b>隱蔽長者：</b> 非社會福利署或長者中心服務對象，但生活有需要者</p>
+            </div>
+
             <div class="member-name" id="dispName"></div>
             <b class="member-id-tag" id="dispNo"></b>
             
@@ -103,12 +118,11 @@
                         <option value="">(保持不變)</option>
                         <option value="獨居">獨居</option>
                         <option value="雙老">雙老</option>
-                        <option value="全老戶">全老戶</option>
-                        <option value="其他">其他</option>
+                        <option value="隱蔽長者">隱蔽長者</option>
                     </select>
                 </div>
                 <div class="update-row">
-                    <span>聯絡電話：</span>
+                    <span>新聯絡電話：</span>
                     <input type="tel" id="newPhone" class="status-select" placeholder="輸入 8 位電話" maxlength="8">
                 </div>
                 <div style="text-align: right;">
@@ -118,7 +132,7 @@
             
             <div class="voucher-box" id="voucherSection">
                 <label style="font-size: 22px; font-weight: bold; color: #1565c0; display: block; margin-bottom: 10px;">🏷️ 請掃描食物劵洗水號：</label>
-                <input type="text" id="voucherInput" class="main-input" placeholder="例如: 28601..." oninput="this.value = this.value.toUpperCase()">
+                <input type="text" id="voucherInput" class="main-input" placeholder="例如: 28601..." autocomplete="off" oninput="this.value = this.value.toUpperCase()">
             </div>
             
             <button id="confirmBtn" class="btn-confirm">確認派發</button>
@@ -135,7 +149,9 @@
             <label>電話：</label><input type="tel" id="nmPhone" class="nm-input" placeholder="電話" maxlength="8">
             <label>居住狀況：</label>
             <select id="nmLivingStatus" class="nm-input" style="height: 50px;">
-                <option value="獨居">獨居</option><option value="雙老">雙老</option><option value="全老戶">全老戶</option><option value="其他">其他</option>
+                <option value="獨居">獨居</option>
+                <option value="雙老">雙老</option>
+                <option value="隱蔽長者">隱蔽長者</option>
             </select>
             <div class="voucher-box" style="background: #fff3e0; border-color: #FF9800;">
                 <label style="color: #e65100; font-weight:bold;">🏷️ 食物劵洗水號：</label>
@@ -147,7 +163,7 @@
 
     <script>
         // 1. 職員登入設定
-        const STAFF_PASSWORD = "CWDECCTEAMA1234"; 
+        const STAFF_PASSWORD = "CWD2026"; 
         function checkLogin() {
             if (document.getElementById('loginPwd').value === STAFF_PASSWORD) {
                 sessionStorage.setItem('isStaffLoggedIn', 'true');
@@ -214,6 +230,7 @@
             document.getElementById('barcodeInput').value = "";
             if (!val) return;
             document.getElementById('resultCard').style.display = "none";
+            document.getElementById('ageWarningMsg').style.display = "none"; // 重置警告框
             document.body.style.backgroundColor = "#f0f2f5";
             currentTargetRef = null;
 
@@ -230,6 +247,14 @@
                     document.getElementById('resultCard').style.display = "block";
                     document.getElementById('dispName').innerText = maskName(data.name);
                     document.getElementById('dispNo').innerText = "會員編號: " + data.memberNo;
+                    
+                    // 🔥 檢查年齡是否小於 60 歲
+                    if (data.age) {
+                        const ageNum = parseInt(data.age, 10);
+                        if (!isNaN(ageNum) && ageNum < 60) {
+                            document.getElementById('ageWarningMsg').style.display = "block";
+                        }
+                    }
                     
                     if (data.hasClaimed) {
                         document.body.style.backgroundColor = "#ffcdd2";
@@ -277,6 +302,8 @@
             if (p) up.updatedPhone = p;
             await currentTargetRef.update(up);
             alert("✅ 資料已儲存，將會反映在匯出報告中。");
+            document.getElementById('newStatus').value = "";
+            document.getElementById('newPhone').value = "";
         };
 
         document.getElementById('nmConfirmBtn').onclick = async () => {
