@@ -26,7 +26,7 @@
         .menu-btn { font-size: 35px; padding: 30px; margin: 15px; width: 40%; min-width: 300px; border-radius: 20px; border: none; cursor: pointer; font-weight: bold; box-shadow: 0 10px 20px rgba(0,0,0,0.1); transition: transform 0.2s; display: inline-block;}
         .btn-member { background-color: #2196F3; color: white; }
         .btn-nonmember { background-color: #FF9800; color: white; }
-        .btn-newmember { background-color: #009688; color: white; } /* 新會員按鈕顏色 */
+        .btn-newmember { background-color: #009688; color: white; }
         
         .back-btn { position: absolute; top: 20px; left: 20px; font-size: 18px; padding: 10px 20px; background: #607D8B; color: white; border: none; border-radius: 10px; cursor: pointer;}
         
@@ -199,23 +199,30 @@
     </div>
 
     <script>
-        // 職員登入設定
-        const STAFF_PASSWORD = "CwdeccTeama1234"; 
+        // ==================== 1. 登入設定 ====================
+        const STAFF_PASSWORD = "CWD2026"; 
+        
         function checkLogin() {
             if (document.getElementById('loginPwd').value === STAFF_PASSWORD) {
                 sessionStorage.setItem('isStaffLoggedIn', 'true');
                 showMainSystem();
             } else { alert('❌ 密碼錯誤'); }
         }
+        
         function showMainSystem() {
             document.getElementById('screen-login').classList.remove('active');
             document.getElementById('screen-home').classList.add('active');
             document.getElementById('dashboard').style.display = 'inline-block';
         }
+        
         if (sessionStorage.getItem('isStaffLoggedIn') === 'true') showMainSystem();
-        document.getElementById('loginPwd').onkeypress = e => { if(e.key==='Enter') checkLogin(); };
+        
+        // 確保可以撳 Enter 登入
+        document.getElementById('loginPwd').onkeypress = function(e) { 
+            if(e.key === 'Enter') checkLogin(); 
+        };
 
-        // Firebase 初始化
+        // ==================== 2. Firebase 初始化 ====================
         const firebaseConfig = {
             apiKey: "AIzaSyBkYaOS6YFapXxt4UTwTy3bkK-C_f50hWw",
             authDomain: "food-voucher-2026.firebaseapp.com",
@@ -227,13 +234,12 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // 姓名遮蔽函數
+        // ==================== 3. 系統功能 ====================
         function maskName(name) {
             if (!name || name.length < 2) return name;
             return name.charAt(0) + "*".repeat(name.length - 2) + name.charAt(name.length - 1);
         }
 
-        // 洗水號白名單設定
         const validVoucherRules = ["28601-28613", "28211-28300", "28301-28400", "28401-28500", "28501-28600", "6101-6200", "6201-6300", "6301-6400", "6401-6448", "6046-6100"];
         const validVoucherSet = new Set();
         validVoucherRules.forEach(r => {
@@ -243,7 +249,6 @@
             } else validVoucherSet.add(r);
         });
 
-        // 系統邏輯
         function switchScreen(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
@@ -268,7 +273,6 @@
         }
         updateCounter();
 
-        // 即時檢查新會員年齡
         function checkNewMemberAge() {
             const ageVal = document.getElementById('newMemAge').value;
             const warningBox = document.getElementById('newAgeWarningMsg');
@@ -279,6 +283,7 @@
             }
         }
 
+        // ==================== 4. 會員搜尋 ====================
         async function performSearch() {
             const val = document.getElementById('barcodeInput').value.trim().toUpperCase();
             document.getElementById('barcodeInput').value = "";
@@ -326,12 +331,14 @@
             } catch (e) { alert(e); }
         }
 
+        // ==================== 5. 按鈕及鍵盤事件綁定 ====================
         document.getElementById('searchMemberBtn').onclick = performSearch;
-        document.getElementById('barcodeInput').onkeypress = e => { if(e.key==='Enter') performSearch(); };
-        document.getElementById('voucherInput').onkeypress = e => { if(e.key==='Enter') document.getElementById('confirmBtn').click(); };
-        document.getElementById('nmVoucherInput').onkeypress = e => { if(e.key==='Enter') document.getElementById('nmConfirmBtn').click(); };
-        document.getElementById('newMemVoucherInput').onkeypress = e => { if(e.key==='Enter') document.getElementById('newMemConfirmBtn').click(); };
+        document.getElementById('barcodeInput').onkeypress = function(e) { if(e.key==='Enter') performSearch(); };
+        document.getElementById('voucherInput').onkeypress = function(e) { if(e.key==='Enter') document.getElementById('confirmBtn').click(); };
+        document.getElementById('nmVoucherInput').onkeypress = function(e) { if(e.key==='Enter') document.getElementById('nmConfirmBtn').click(); };
+        document.getElementById('newMemVoucherInput').onkeypress = function(e) { if(e.key==='Enter') document.getElementById('newMemConfirmBtn').click(); };
 
+        // ==================== 6. 確認派發邏輯 ====================
         document.getElementById('confirmBtn').onclick = async () => {
             const v = document.getElementById('voucherInput').value.trim();
             if (!validVoucherSet.has(v)) return alert("❌ 洗水號無效！不在發放範圍內。");
@@ -341,7 +348,7 @@
 
             await currentTargetRef.update({ hasClaimed: true, claimTime: new Date().toISOString(), voucherNo: v });
             document.body.style.backgroundColor = "#4CAF50";
-            document.getElementById('statusMsg').innerHTML = "✅ 成功紀錄！";
+            document.getElementById('statusMsg').innerHTML = "✅ 成功紀錄！請交出食物劵。";
             document.getElementById('confirmBtn').style.display = "none";
             document.getElementById('voucherSection').style.display = "none";
             setTimeout(() => document.getElementById('barcodeInput').focus(), 1500);
@@ -375,4 +382,55 @@
             
             const dupV1 = await db.collection('members').where('voucherNo', '==', v).get();
             const dupV2 = await db.collection('non_members').where('voucherNo', '==', v).get();
-            if (!dupV1
+            if (!dupV1.empty || !dupV2.empty) return alert("❌ 此洗水號已被使用！");
+
+            await db.collection('non_members').doc(hkid).set({ name, hkid, phone: p, livingStatus: s, voucherNo: v, claimTime: new Date().toISOString() });
+            alert("✅ 非會員登記成功！");
+            switchScreen('screen-home');
+        };
+        
+        document.getElementById('newMemConfirmBtn').onclick = async () => {
+            const no = document.getElementById('newMemNo').value.trim().toUpperCase();
+            const name = document.getElementById('newMemName').value.trim();
+            const hkid = document.getElementById('newMemHkid').value.trim().toUpperCase();
+            const age = document.getElementById('newMemAge').value.trim();
+            const p = document.getElementById('newMemPhone').value.trim();
+            const s = document.getElementById('newMemLivingStatus').value;
+            const v = document.getElementById('newMemVoucherInput').value.trim();
+
+            if(!no || !name || !hkid || !age || !v) return alert("請填寫所有必填欄位！");
+            if (!validVoucherSet.has(v)) return alert("❌ 洗水號無效！");
+            
+            const dupMem = await db.collection('members').doc(no).get();
+            if (dupMem.exists) return alert("❌ 警告：此會員號碼已存在系統中！");
+            
+            const dupV1 = await db.collection('members').where('voucherNo', '==', v).get();
+            const dupV2 = await db.collection('non_members').where('voucherNo', '==', v).get();
+            if (!dupV1.empty || !dupV2.empty) return alert("❌ 此洗水號已被使用！");
+
+            await db.collection('members').doc(no).set({ 
+                memberNo: no, 
+                name: name, 
+                hkid: hkid,
+                age: age,
+                phone: p, 
+                livingStatus: s, 
+                voucherNo: v, 
+                hasClaimed: true, 
+                claimTime: new Date().toISOString(),
+                isNewMember: true 
+            });
+            
+            alert("✅ 新會員入會及派發成功！紀錄已同步至系統。");
+            switchScreen('screen-home');
+        };
+
+        document.getElementById('cancelBtn').onclick = () => {
+            document.getElementById('resultCard').style.display = "none";
+            document.getElementById('ageWarningMsg').style.display = "none"; 
+            document.body.style.backgroundColor = "#f0f2f5";
+            document.getElementById('barcodeInput').focus();
+        };
+    </script>
+</body>
+</html>
