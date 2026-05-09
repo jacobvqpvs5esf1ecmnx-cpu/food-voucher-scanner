@@ -2,7 +2,7 @@
 <html lang="zh-HK">
 <head>
     <meta charset="UTF-8">
-    <title>食物劵派發系統 (完善版)</title>
+    <title>食物劵派發系統 (進度儀表板版)</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     <style>
@@ -22,9 +22,14 @@
         /* 返回按鈕 */
         .back-btn { position: absolute; top: 20px; left: 20px; font-size: 20px; padding: 10px 20px; background: #607D8B; color: white; border: none; border-radius: 10px; cursor: pointer;}
         
-        /* 計數機 */
-        #counterBox { display: inline-block; background-color: #333; color: white; font-size: 24px; font-weight: bold; padding: 10px 30px; border-radius: 30px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.2);}
-        #claimedCount { color: #4CAF50; font-size: 30px; }
+        /* 🔥 新增：進度儀表板 */
+        #dashboard { display: inline-block; background-color: #333; color: white; padding: 15px 40px; border-radius: 15px; margin-bottom: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); text-align: center; }
+        .dash-title { font-size: 20px; color: #ccc; margin-bottom: 10px; }
+        .dash-stats { font-size: 28px; font-weight: bold; margin-bottom: 8px; }
+        .dash-total { font-size: 18px; color: #aaa; border-top: 1px solid #555; padding-top: 8px; margin-top: 8px; }
+        .text-blue { color: #42A5F5; }
+        .text-orange { color: #FFCA28; }
+        .text-green { color: #66BB6A; }
         
         /* 會員區輸入框 */
         .main-input { font-size: 30px; padding: 15px; width: 100%; text-align: center; border: 3px solid #ccc; border-radius: 10px; outline: none; text-transform: uppercase;}
@@ -53,16 +58,19 @@
         .nm-form label { display: block; font-size: 24px; font-weight: bold; text-align: left; margin-top: 20px; color: #333;}
         .nm-input { font-size: 30px; padding: 15px; width: 90%; border: 2px solid #ccc; border-radius: 10px; margin-top: 10px; outline: none;}
         .nm-input:focus { border-color: #FF9800; }
-
-        .text-red { color: #f44336; }
-        .text-green { color: #4CAF50; }
-        .text-orange { color: #ff9800; }
     </style>
 </head>
 <body>
 
-    <div id="counterBox">
-        今日已派發總數： <span id="claimedCount">--</span> 份
+    <div id="dashboard">
+        <div class="dash-title">📊 派發進度總覽</div>
+        <div class="dash-stats">
+            會員：<span id="memberCount" class="text-blue">--</span> / 650 &nbsp;&nbsp;|&nbsp;&nbsp; 
+            非會員：<span id="nonMemberCount" class="text-orange">--</span> / 150
+        </div>
+        <div class="dash-total">
+            總共已派發：<span id="totalCount" class="text-green" style="font-weight:bold; font-size:22px;">--</span> / 800
+        </div>
     </div><br>
 
     <div id="screen-home" class="screen active">
@@ -165,19 +173,32 @@
                 document.getElementById('nmName').value = '';
                 document.getElementById('nmHkid').value = '';
                 document.getElementById('nmPhone').value = '';
-                document.getElementById('nmLivingStatus').selectedIndex = 0; // 重置選項
+                document.getElementById('nmLivingStatus').selectedIndex = 0; 
                 setTimeout(() => document.getElementById('nmName').focus(), 100);
             }
         }
 
-        // 實時監聽已領取數量
+        // 🔥 實時監聽已領取數量 (獨立計算會員及非會員)
         function updateCounter() {
+            let memCount = 0;
+            let nonMemCount = 0;
+            
+            const memberSpan = document.getElementById('memberCount');
+            const nonMemberSpan = document.getElementById('nonMemberCount');
+            const totalSpan = document.getElementById('totalCount');
+
+            // 監聽會員
             db.collection('members').where('hasClaimed', '==', true).onSnapshot(snap1 => {
-                let memberCount = snap1.size;
-                db.collection('non_members').onSnapshot(snap2 => {
-                    let nonMemberCount = snap2.size;
-                    document.getElementById('claimedCount').innerText = memberCount + nonMemberCount;
-                });
+                memCount = snap1.size;
+                memberSpan.innerText = memCount;
+                totalSpan.innerText = memCount + nonMemCount;
+            });
+
+            // 監聽非會員
+            db.collection('non_members').onSnapshot(snap2 => {
+                nonMemCount = snap2.size;
+                nonMemberSpan.innerText = nonMemCount;
+                totalSpan.innerText = memCount + nonMemCount;
             });
         }
         updateCounter();
@@ -194,7 +215,6 @@
         const currentLivingStatus = document.getElementById('currentLivingStatus');
         let currentTargetRef = null;
 
-        // 點擊空白處自動對焦 (只喺會員畫面生效，避開按鈕)
         document.addEventListener('click', (e) => { 
             if(document.getElementById('screen-member').classList.contains('active') && 
                e.target.tagName !== 'BUTTON' && e.target.tagName !== 'SELECT') {
@@ -202,9 +222,8 @@
             }
         });
 
-        // 將搜尋邏輯獨立成一個 Function，方便 Enter 同 Click 共用
         async function performSearch() {
-            const inputValue = input.value.trim().toUpperCase(); // 保險起見再大階一次
+            const inputValue = input.value.trim().toUpperCase(); 
             input.value = "";
             if (!inputValue) return;
 
@@ -263,15 +282,12 @@
             }
         }
 
-        // 綁定 Enter 鍵
         input.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') performSearch();
         });
 
-        // 綁定「搜尋」按鈕
         searchMemberBtn.addEventListener('click', performSearch);
 
-        // 綁定確認派發按鈕
         confirmBtn.onclick = async () => {
             if (!currentTargetRef) return;
             confirmBtn.disabled = true;
@@ -319,7 +335,7 @@
             const name = document.getElementById('nmName').value.trim();
             const hkid = document.getElementById('nmHkid').value.trim().toUpperCase(); 
             const phone = document.getElementById('nmPhone').value.trim();
-            const livingStatus = document.getElementById('nmLivingStatus').value; // 獲取居住狀況
+            const livingStatus = document.getElementById('nmLivingStatus').value; 
 
             if (!name || !hkid || !phone) {
                 alert("⚠️ 請填寫完整姓名、身份證號碼及電話號碼！");
@@ -347,7 +363,6 @@
                     return;
                 }
 
-                // 將居住狀況 (livingStatus) 寫入非會員紀錄
                 await nmRef.set({
                     name: name,
                     hkid: hkid,
