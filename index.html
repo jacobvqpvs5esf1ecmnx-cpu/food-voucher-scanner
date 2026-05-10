@@ -43,16 +43,18 @@
         .btn-nonmember { background-color: #FF9800; color: white; }
         .btn-newmember { background-color: #009688; color: white; }
         
-        /* 🔥 全新：側邊快速導覽列佈局 */
-        .layout-container { display: flex; max-width: 1000px; margin: 0 auto; gap: 30px; align-items: flex-start; text-align: center; }
+        /* 🔥 全新：側邊快速導覽列佈局 (已加入右側平衡塊，確保絕對置中) */
+        .layout-container { display: flex; max-width: 1200px; margin: 0 auto; align-items: flex-start; text-align: center; justify-content: center; }
         .side-menu { display: flex; flex-direction: column; gap: 15px; width: 220px; flex-shrink: 0; margin-top: 60px; }
+        .main-content { flex-grow: 1; max-width: 760px; width: 100%; display: flex; flex-direction: column; align-items: center; margin: 0 30px; }
+        .layout-container::after { content: ""; width: 220px; flex-shrink: 0; display: block; } /* 呢個係隱形區塊，用嚟平衡左邊選單 */
+
         .side-btn { padding: 15px 15px; font-size: 20px; font-weight: bold; border-radius: 15px; border: none; cursor: pointer; transition: 0.2s; background: #e3e3e3; color: #555; box-shadow: 5px 5px 10px #c8c8c8, -5px -5px 10px #fefefe; }
         .side-btn:hover { background: #d5d5d5; }
         .side-btn.active-member { background: #2196F3; color: white; box-shadow: inset 4px 4px 8px rgba(0,0,0,0.1); }
         .side-btn.active-nonmember { background: #FF9800; color: white; box-shadow: inset 4px 4px 8px rgba(0,0,0,0.1); }
         .side-btn.active-newmember { background: #009688; color: white; box-shadow: inset 4px 4px 8px rgba(0,0,0,0.1); }
         .side-btn.back { background: #607D8B; color: white; margin-top: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .main-content { flex-grow: 1; width: 100%; display: flex; flex-direction: column; align-items: center; }
 
         .search-group { display: flex; justify-content: center; width: 100%; margin: 0 auto 20px auto; gap: 10px;}
         .main-input { font-size: 24px; padding: 15px; width: 100%; text-align: center; border: 3px solid #ccc; border-radius: 10px; outline: none; text-transform: uppercase;}
@@ -97,7 +99,11 @@
 
         .text-red { color: #f44336; } .text-green { color: #4CAF50; } .text-orange { color: #FF9800; }
 
-        /* 🔥 RWD 響應式：手機版自動變成頂部 Tabs */
+        @media (max-width: 1100px) {
+            .layout-container::after { display: none; } /* 螢幕唔夠闊時隱藏右邊平衡塊，確保內容唔會太逼 */
+        }
+
+        /* RWD 響應式：手機版自動變成頂部 Tabs */
         @media (max-width: 768px) {
             body { padding: 10px; }
             .card, .nm-form, .result-card { padding: 20px 15px; margin-top: 10px; }
@@ -117,6 +123,8 @@
             
             /* 手機版側邊選單變身 */
             .layout-container { flex-direction: column; gap: 15px; margin-top: 10px; }
+            .layout-container::after { display: none; } /* 手機版隱藏平衡區塊 */
+            .main-content { margin: 0; }
             .side-menu { width: 100%; flex-direction: row; flex-wrap: wrap; margin-top: 0; gap: 8px; justify-content: space-between; }
             .side-btn { width: 31%; font-size: 16px; padding: 12px 5px; text-align: center; box-shadow: 3px 3px 6px #c8c8c8, -3px -3px 6px #fefefe;}
             .side-btn.back { width: 100%; margin-top: 5px; padding: 12px; background: #607D8B; }
@@ -207,7 +215,7 @@
                             </div>
                         </div>
                         <div class="update-row">
-                            <span>聯絡電話：</span>
+                            <span>新聯絡電話：</span>
                             <input type="tel" id="newPhone" class="status-select" placeholder="輸入 8 位電話" maxlength="8">
                         </div>
                         <div style="text-align: right;">
