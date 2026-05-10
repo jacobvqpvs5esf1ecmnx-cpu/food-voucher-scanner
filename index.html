@@ -16,95 +16,25 @@
         h1 { color: #333; margin-bottom: 15px;}
         .screen { display: none; } .screen.active { display: block; }
         
+        /* 登入畫面 CSS */
         .card {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          min-height: 400px;
-          max-width: 450px;
-          width: 95%;
-          margin: 60px auto;
-          flex-direction: column;
-          gap: 30px;
-          background: #e3e3e3;
+          display: flex; justify-content: center; align-items: center;
+          min-height: 400px; max-width: 450px; width: 95%; margin: 60px auto;
+          flex-direction: column; gap: 30px; background: #e3e3e3;
           box-shadow: 16px 16px 32px #c8c8c8, -16px -16px 32px #fefefe;
-          border-radius: 15px;
-          padding: 40px 20px;
+          border-radius: 15px; padding: 40px 20px;
         }
-
         .login-title-group { text-align: center; width: 100%; }
-
-        .login {
-          color: #1565c0;
-          letter-spacing: 2px;
-          display: block;
-          font-weight: bold;
-          font-size: 26px;
-          margin-top: 15px;
-        }
-
+        .login { color: #1565c0; letter-spacing: 2px; display: block; font-weight: bold; font-size: 26px; margin-top: 15px; }
         .inputBox { position: relative; width: 250px; }
-
-        .inputBox input {
-          width: 100%;
-          padding: 10px;
-          outline: none;
-          border: none;
-          color: #000;
-          font-size: 1.2em;
-          background: transparent;
-          border-left: 2px solid #000;
-          border-bottom: 2px solid #000;
-          transition: 0.1s;
-          border-bottom-left-radius: 8px;
-        }
-
-        .inputBox span {
-          margin-top: 5px;
-          position: absolute;
-          left: 0;
-          transform: translateY(-4px);
-          margin-left: 10px;
-          padding: 10px;
-          pointer-events: none;
-          font-size: 16px;
-          color: #555;
-          transition: 0.5s;
-          letter-spacing: 2px;
-          border-radius: 8px;
-        }
-
-        .inputBox input:valid~span,
-        .inputBox input:focus~span {
-          transform: translateX(110px) translateY(-15px);
-          font-size: 0.8em;
-          padding: 5px 10px;
-          background: #000;
-          letter-spacing: 0.1em;
-          color: #fff;
-          border: 2px;
-        }
-
-        .inputBox input:valid,
-        .inputBox input:focus { border: 2px solid #000; border-radius: 8px; }
-
-        .enter {
-          height: 45px;
-          width: 120px;
-          border-radius: 5px;
-          border: 2px solid #000;
-          cursor: pointer;
-          background-color: transparent;
-          transition: 0.5s;
-          font-size: 16px;
-          font-weight: bold;
-          letter-spacing: 2px;
-          margin-bottom: 1em;
-        }
-
+        .inputBox input { width: 100%; padding: 10px; outline: none; border: none; color: #000; font-size: 1.2em; background: transparent; border-left: 2px solid #000; border-bottom: 2px solid #000; transition: 0.1s; border-bottom-left-radius: 8px; }
+        .inputBox span { margin-top: 5px; position: absolute; left: 0; transform: translateY(-4px); margin-left: 10px; padding: 10px; pointer-events: none; font-size: 16px; color: #555; transition: 0.5s; letter-spacing: 2px; border-radius: 8px; }
+        .inputBox input:valid~span, .inputBox input:focus~span { transform: translateX(110px) translateY(-15px); font-size: 0.8em; padding: 5px 10px; background: #000; letter-spacing: 0.1em; color: #fff; border: 2px; }
+        .inputBox input:valid, .inputBox input:focus { border: 2px solid #000; border-radius: 8px; }
+        .enter { height: 45px; width: 120px; border-radius: 5px; border: 2px solid #000; cursor: pointer; background-color: transparent; transition: 0.5s; font-size: 16px; font-weight: bold; letter-spacing: 2px; margin-bottom: 1em; }
         .enter:hover { background-color: rgb(0, 0, 0); color: white; }
 
-        #dashboard { display: none; background-color: #333; color: white; padding: 15px 20px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); text-align: center; max-width: 800px; margin-left: auto; margin-right: auto;}
+        #dashboard { display: none; background-color: #333; color: white; padding: 15px 20px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); text-align: center; max-width: 900px; margin-left: auto; margin-right: auto;}
         .dash-stats { font-size: 22px; font-weight: bold; }
         .text-blue { color: #42A5F5; } .text-orange { color: #FFCA28; } .text-green { color: #66BB6A; }
         
@@ -113,13 +43,22 @@
         .btn-nonmember { background-color: #FF9800; color: white; }
         .btn-newmember { background-color: #009688; color: white; }
         
-        .back-btn { display: inline-block; font-size: 18px; padding: 10px 20px; background: #607D8B; color: white; border: none; border-radius: 10px; cursor: pointer; margin-bottom: 20px;}
-        
-        .search-group { display: flex; justify-content: center; max-width: 600px; margin: 0 auto 20px auto; gap: 10px; width: 95%;}
+        /* 🔥 全新：側邊快速導覽列佈局 */
+        .layout-container { display: flex; max-width: 1000px; margin: 0 auto; gap: 30px; align-items: flex-start; text-align: center; }
+        .side-menu { display: flex; flex-direction: column; gap: 15px; width: 220px; flex-shrink: 0; margin-top: 60px; }
+        .side-btn { padding: 15px 15px; font-size: 20px; font-weight: bold; border-radius: 15px; border: none; cursor: pointer; transition: 0.2s; background: #e3e3e3; color: #555; box-shadow: 5px 5px 10px #c8c8c8, -5px -5px 10px #fefefe; }
+        .side-btn:hover { background: #d5d5d5; }
+        .side-btn.active-member { background: #2196F3; color: white; box-shadow: inset 4px 4px 8px rgba(0,0,0,0.1); }
+        .side-btn.active-nonmember { background: #FF9800; color: white; box-shadow: inset 4px 4px 8px rgba(0,0,0,0.1); }
+        .side-btn.active-newmember { background: #009688; color: white; box-shadow: inset 4px 4px 8px rgba(0,0,0,0.1); }
+        .side-btn.back { background: #607D8B; color: white; margin-top: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .main-content { flex-grow: 1; width: 100%; display: flex; flex-direction: column; align-items: center; }
+
+        .search-group { display: flex; justify-content: center; width: 100%; margin: 0 auto 20px auto; gap: 10px;}
         .main-input { font-size: 24px; padding: 15px; width: 100%; text-align: center; border: 3px solid #ccc; border-radius: 10px; outline: none; text-transform: uppercase;}
         #searchMemberBtn { padding: 0 20px; border-radius: 10px; border: none; background: #607D8B; color: white; font-size: 20px; cursor: pointer; white-space: nowrap;}
         
-        .result-card { display: none; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); max-width: 800px; width: 95%; margin: auto; }
+        .result-card { display: none; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); width: 100%; margin: auto; }
         .status-msg { font-size: 30px; font-weight: bold; margin-bottom: 10px; }
         .member-name { font-size: 45px; font-weight: bold; margin-bottom: 5px; color: #000; }
         .member-id-tag { font-size: 22px; color: #666; margin-bottom: 5px; display: block;}
@@ -137,24 +76,11 @@
         
         .voucher-box { margin-top: 20px; padding: 20px; background: #e3f2fd; border: 2px solid #2196F3; border-radius: 15px;}
         
-        /* 新擬態立體水波動畫按鈕 */
         .button2 {
-          display: inline-block;
-          transition: all 0.2s ease-in;
-          position: relative;
-          overflow: hidden;
-          z-index: 1;
-          color: #090909;
-          padding: 0.7em 1.7em;
-          cursor: pointer;
-          font-size: 26px;
-          font-weight: bold;
-          border-radius: 0.5em;
-          background: #f0f2f5;
-          border: 1px solid #f0f2f5;
-          box-shadow: 6px 6px 12px #c5c5c5, -6px -6px 12px #ffffff;
-          width: 100%;
-          margin-top: 20px;
+          display: inline-block; transition: all 0.2s ease-in; position: relative; overflow: hidden; z-index: 1;
+          color: #090909; padding: 0.7em 1.7em; cursor: pointer; font-size: 26px; font-weight: bold;
+          border-radius: 0.5em; background: #f0f2f5; border: 1px solid #f0f2f5;
+          box-shadow: 6px 6px 12px #c5c5c5, -6px -6px 12px #ffffff; width: 100%; margin-top: 20px;
         }
         .button2:active { color: #666; box-shadow: inset 4px 4px 12px #c5c5c5, inset -4px -4px 12px #ffffff; }
         .button2:before { content: ""; position: absolute; left: 50%; transform: translateX(-50%) scaleY(1) scaleX(1.25); top: 100%; width: 140%; height: 180%; background-color: rgba(0, 0, 0, 0.05); border-radius: 50%; display: block; transition: all 0.5s 0.1s cubic-bezier(0.55, 0, 0.1, 1); z-index: -1; }
@@ -165,15 +91,16 @@
 
         .btn-cancel { background-color: #9e9e9e; color: white; font-size: 20px; width: 100%; padding: 12px; border: none; border-radius: 10px; cursor: pointer; margin-top: 15px;}
         
-        .nm-form { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); max-width: 600px; width: 95%; margin: auto; }
+        .nm-form { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); width: 100%; margin: auto; }
         .nm-form label { display: block; font-size: 18px; font-weight: bold; text-align: left; margin-top: 15px; color: #333;}
         .nm-input { font-size: 20px; padding: 12px; width: 100%; border: 2px solid #ccc; border-radius: 10px; margin-top: 8px; outline: none;}
 
         .text-red { color: #f44336; } .text-green { color: #4CAF50; } .text-orange { color: #FF9800; }
 
+        /* 🔥 RWD 響應式：手機版自動變成頂部 Tabs */
         @media (max-width: 768px) {
             body { padding: 10px; }
-            .card, .nm-form, .result-card { padding: 20px 15px; margin-top: 20px; }
+            .card, .nm-form, .result-card { padding: 20px 15px; margin-top: 10px; }
             h1 { font-size: 28px !important; margin-bottom: 20px !important; }
             h2 { font-size: 22px !important; }
             .screen-home-title { font-size: 18px !important; }
@@ -187,6 +114,12 @@
             .update-row { flex-direction: column; align-items: flex-start; gap: 8px;}
             .status-select { width: 100%; }
             .btn-update { width: 100%; margin-top: 10px;}
+            
+            /* 手機版側邊選單變身 */
+            .layout-container { flex-direction: column; gap: 15px; margin-top: 10px; }
+            .side-menu { width: 100%; flex-direction: row; flex-wrap: wrap; margin-top: 0; gap: 8px; justify-content: space-between; }
+            .side-btn { width: 31%; font-size: 16px; padding: 12px 5px; text-align: center; box-shadow: 3px 3px 6px #c8c8c8, -3px -3px 6px #fefefe;}
+            .side-btn.back { width: 100%; margin-top: 5px; padding: 12px; background: #607D8B; }
         }
     </style>
 </head>
@@ -199,12 +132,10 @@
                 <div style="font-size: 28px; color: #E65100; font-weight: bold; line-height: 1.3;">「愛心食肆賞你惠食」<br>第五輪</div>
                 <span class="login">系統登入</span>
             </div>
-            
             <div class="inputBox">
                 <input type="password" id="loginPwd" required="required">
                 <span>職員密碼</span>
             </div>
-            
             <button onclick="checkLogin()" class="enter">進入系統</button>
         </div>
     </div>
@@ -220,7 +151,6 @@
     <div id="screen-home" class="screen">
         <div class="screen-home-title" style="font-size: 24px; color: #666; font-weight: bold; margin-bottom: 10px; margin-top: 20px;">聖雅各福群會 中西區長者地區中心</div>
         <h1 style="font-size: 40px; color: #E65100; margin-top: 0; margin-bottom: 30px;">「愛心食肆賞你惠食」第五輪</h1>
-        
         <h2 style="font-size: 30px; color: #333; margin-bottom: 20px;">請選擇領取者類別</h2>
         <div style="display: flex; justify-content: center; flex-wrap: wrap; max-width: 900px; margin: auto;">
             <button class="menu-btn btn-member" onclick="switchScreen('screen-member')">中心會員</button>
@@ -230,123 +160,152 @@
     </div>
 
     <div id="screen-member" class="screen">
-        <button class="back-btn" onclick="switchScreen('screen-home')">返回首頁</button>
-        <h1>會員領取登記</h1>
-        <div class="search-group">
-            <input type="text" id="barcodeInput" class="main-input" placeholder="掃描會員證或輸入編號..." autocomplete="off" oninput="this.value = this.value.toUpperCase()">
-            <button id="searchMemberBtn">搜尋</button>
-        </div>
-        
-        <div id="resultCard" class="result-card">
-            <div id="statusMsg" class="status-msg"></div>
-            
-            <div id="ageWarningMsg" class="warning-msg">
-                <span class="warning-title">系統提示：此會員年齡未滿 60 歲</span>
-                <p class="warning-text">受惠長者需為香港居民，並符合以下 <b>任何一項</b> 條件：<br>
-                1. <b>60歲或以上：</b> 持有效身分證明文件<br>
-                2. <b>獨居長者：</b> 獨自居住的長者<br>
-                3. <b>雙老住戶：</b> 兩位皆為60歲或以上的長者同住<br>
-                4. <b>隱蔽長者：</b> 非社會福利署或長者中心服務對象</p>
+        <div class="layout-container">
+            <div class="side-menu">
+                <button class="side-btn active-member">中心會員</button>
+                <button class="side-btn" onclick="switchScreen('screen-nonmember')">非會員</button>
+                <button class="side-btn" onclick="switchScreen('screen-newmember')">新會員加入</button>
+                <button class="side-btn back" onclick="switchScreen('screen-home')">返回首頁</button>
             </div>
-
-            <div class="member-name" id="dispName"></div>
-            <b class="member-id-tag" id="dispNo"></b>
-            <b class="member-hkid-tag" id="dispHkid"></b>
-            <b class="member-phone-tag" id="dispPhone"></b>
             
-            <div class="update-box">
-                <div style="color: #1976D2; font-weight: bold; margin-bottom: 10px;">資料更新 (如有需要)</div>
-                <div class="update-row">
-                    <span style="margin-top: 8px;">居住狀況：</span>
-                    <div style="display: flex; flex-direction: column; align-items: flex-end; width: 100%; max-width: 200px;">
-                        <select id="newStatus" class="status-select" onchange="toggleOtherInput('newStatus', 'newStatusOther')">
-                            <option value="">(保持不變)</option>
-                            <option value="獨居">獨居</option>
-                            <option value="雙老">雙老</option>
-                            <option value="隱蔽長者">隱蔽長者</option>
-                            <option value="其他">其他 (請註明)</option>
-                        </select>
-                        <input type="text" id="newStatusOther" class="status-select" placeholder="請註明居住狀況" style="display: none; margin-top: 5px;">
+            <div class="main-content">
+                <h1>會員領取登記</h1>
+                <div class="search-group">
+                    <input type="text" id="barcodeInput" class="main-input" placeholder="掃描會員證或輸入編號..." autocomplete="off" oninput="this.value = this.value.toUpperCase()">
+                    <button id="searchMemberBtn">搜尋</button>
+                </div>
+                
+                <div id="resultCard" class="result-card">
+                    <div id="statusMsg" class="status-msg"></div>
+                    <div id="ageWarningMsg" class="warning-msg">
+                        <span class="warning-title">系統提示：此會員年齡未滿 60 歲</span>
+                        <p class="warning-text">受惠長者需為香港居民，並符合以下 <b>任何一項</b> 條件：<br>
+                        1. <b>60歲或以上：</b> 持有效身分證明文件<br>
+                        2. <b>獨居長者：</b> 獨自居住的長者<br>
+                        3. <b>雙老住戶：</b> 兩位皆為60歲或以上的長者同住<br>
+                        4. <b>隱蔽長者：</b> 非社會福利署或長者中心服務對象</p>
                     </div>
-                </div>
-                <div class="update-row">
-                    <span>聯絡電話：</span>
-                    <input type="tel" id="newPhone" class="status-select" placeholder="輸入 8 位電話" maxlength="8">
-                </div>
-                <div style="text-align: right;">
-                    <button onclick="updateMemberInfo()" class="btn-update">儲存更新</button>
+
+                    <div class="member-name" id="dispName"></div>
+                    <b class="member-id-tag" id="dispNo"></b>
+                    <b class="member-hkid-tag" id="dispHkid"></b>
+                    <b class="member-phone-tag" id="dispPhone"></b>
+                    
+                    <div class="update-box">
+                        <div style="color: #1976D2; font-weight: bold; margin-bottom: 10px;">資料更新 (如有需要)</div>
+                        <div class="update-row">
+                            <span style="margin-top: 8px;">居住狀況：</span>
+                            <div style="display: flex; flex-direction: column; align-items: flex-end; width: 100%; max-width: 200px;">
+                                <select id="newStatus" class="status-select" onchange="toggleOtherInput('newStatus', 'newStatusOther')">
+                                    <option value="">(保持不變)</option>
+                                    <option value="獨居">獨居</option>
+                                    <option value="雙老">雙老</option>
+                                    <option value="隱蔽長者">隱蔽長者</option>
+                                    <option value="其他">其他 (請註明)</option>
+                                </select>
+                                <input type="text" id="newStatusOther" class="status-select" placeholder="請註明居住狀況" style="display: none; margin-top: 5px;">
+                            </div>
+                        </div>
+                        <div class="update-row">
+                            <span>聯絡電話：</span>
+                            <input type="tel" id="newPhone" class="status-select" placeholder="輸入 8 位電話" maxlength="8">
+                        </div>
+                        <div style="text-align: right;">
+                            <button onclick="updateMemberInfo()" class="btn-update">儲存更新</button>
+                        </div>
+                    </div>
+                    
+                    <div class="voucher-box" id="voucherSection">
+                        <label style="font-size: 20px; font-weight: bold; color: #1565c0; display: block; margin-bottom: 10px;">請輸入S/N(食物劵Number)：</label>
+                        <input type="text" id="voucherInput" class="main-input" placeholder="例如: 28601..." autocomplete="off" oninput="this.value = this.value.toUpperCase()">
+                    </div>
+                    
+                    <button id="confirmBtn" class="button2">確認派發</button>
+                    <button id="cancelBtn" class="btn-cancel">取消 / 下一位</button>
                 </div>
             </div>
-            
-            <div class="voucher-box" id="voucherSection">
-                <label style="font-size: 20px; font-weight: bold; color: #1565c0; display: block; margin-bottom: 10px;">請輸入S/N(食物劵Number)：</label>
-                <input type="text" id="voucherInput" class="main-input" placeholder="例如: 28601..." autocomplete="off" oninput="this.value = this.value.toUpperCase()">
-            </div>
-            
-            <button id="confirmBtn" class="button2">確認派發</button>
-            <button id="cancelBtn" class="btn-cancel">取消 / 下一位</button>
         </div>
     </div>
 
     <div id="screen-nonmember" class="screen">
-        <button class="back-btn" onclick="switchScreen('screen-home')">返回首頁</button>
-        <h1>非會員領取登記</h1>
-        <div class="nm-form">
-            <label>姓名：</label><input type="text" id="nmName" class="nm-input" placeholder="全名">
-            <label>身份證：</label><input type="text" id="nmHkid" class="nm-input" placeholder="身份證" oninput="this.value = this.value.toUpperCase()">
-            <label>電話：</label><input type="tel" id="nmPhone" class="nm-input" placeholder="電話" maxlength="8">
-            <label>居住狀況：</label>
-            <select id="nmLivingStatus" class="nm-input" style="height: 50px;" onchange="toggleOtherInput('nmLivingStatus', 'nmLivingStatusOther')">
-                <option value="獨居">獨居</option>
-                <option value="雙老">雙老</option>
-                <option value="隱蔽長者">隱蔽長者</option>
-                <option value="其他">其他 (請註明)</option>
-            </select>
-            <input type="text" id="nmLivingStatusOther" class="nm-input" placeholder="請註明居住狀況" style="display: none;">
-            
-            <div class="voucher-box" style="background: #fff3e0; border-color: #FF9800;">
-                <label style="color: #e65100; font-weight:bold; display:block; margin-bottom:5px;">請輸入S/N(食物劵Number)：</label>
-                <input type="text" id="nmVoucherInput" class="nm-input" placeholder="S/N" oninput="this.value = this.value.toUpperCase()">
+        <div class="layout-container">
+            <div class="side-menu">
+                <button class="side-btn" onclick="switchScreen('screen-member')">中心會員</button>
+                <button class="side-btn active-nonmember">非會員</button>
+                <button class="side-btn" onclick="switchScreen('screen-newmember')">新會員加入</button>
+                <button class="side-btn back" onclick="switchScreen('screen-home')">返回首頁</button>
             </div>
-            <button id="nmConfirmBtn" class="button2">確認派發</button>
+            
+            <div class="main-content">
+                <h1>非會員領取登記</h1>
+                <div class="nm-form">
+                    <label>姓名：</label><input type="text" id="nmName" class="nm-input" placeholder="全名">
+                    <label>身份證：</label><input type="text" id="nmHkid" class="nm-input" placeholder="身份證" oninput="this.value = this.value.toUpperCase()">
+                    <label>電話：</label><input type="tel" id="nmPhone" class="nm-input" placeholder="電話" maxlength="8">
+                    <label>居住狀況：</label>
+                    <select id="nmLivingStatus" class="nm-input" style="height: 50px;" onchange="toggleOtherInput('nmLivingStatus', 'nmLivingStatusOther')">
+                        <option value="獨居">獨居</option>
+                        <option value="雙老">雙老</option>
+                        <option value="隱蔽長者">隱蔽長者</option>
+                        <option value="其他">其他 (請註明)</option>
+                    </select>
+                    <input type="text" id="nmLivingStatusOther" class="nm-input" placeholder="請註明居住狀況" style="display: none;">
+                    
+                    <div class="voucher-box" style="background: #fff3e0; border-color: #FF9800;">
+                        <label style="color: #e65100; font-weight:bold; display:block; margin-bottom:5px;">請輸入S/N(食物劵Number)：</label>
+                        <input type="text" id="nmVoucherInput" class="nm-input" placeholder="S/N" oninput="this.value = this.value.toUpperCase()">
+                    </div>
+                    <button id="nmConfirmBtn" class="button2">確認派發</button>
+                </div>
+            </div>
         </div>
     </div>
 
     <div id="screen-newmember" class="screen">
-        <button class="back-btn" onclick="switchScreen('screen-home')">返回首頁</button>
-        <h1>新會員即場加入及派發</h1>
-        <div class="nm-form">
-            <div id="newAgeWarningMsg" class="warning-msg">
-                <span class="warning-title">系統提示：此會員年齡未滿 60 歲</span>
-                <p class="warning-text">受惠長者需為香港居民，並符合以下 <b>任何一項</b> 條件：<br>
-                1. <b>60歲或以上：</b> 持有效身分證明文件<br>
-                2. <b>獨居長者：</b> 獨自居住的長者<br>
-                3. <b>雙老住戶：</b> 兩位皆為60歲或以上的長者同住<br>
-                4. <b>隱蔽長者：</b> 非社會福利署或長者中心服務對象</p>
+        <div class="layout-container">
+            <div class="side-menu">
+                <button class="side-btn" onclick="switchScreen('screen-member')">中心會員</button>
+                <button class="side-btn" onclick="switchScreen('screen-nonmember')">非會員</button>
+                <button class="side-btn active-newmember">新會員加入</button>
+                <button class="side-btn back" onclick="switchScreen('screen-home')">返回首頁</button>
             </div>
+            
+            <div class="main-content">
+                <h1>新會員即場加入及派發</h1>
+                <div class="nm-form">
+                    <div id="newAgeWarningMsg" class="warning-msg">
+                        <span class="warning-title">系統提示：此會員年齡未滿 60 歲</span>
+                        <p class="warning-text">受惠長者需為香港居民，並符合以下 <b>任何一項</b> 條件：<br>
+                        1. <b>60歲或以上：</b> 持有效身分證明文件<br>
+                        2. <b>獨居長者：</b> 獨自居住的長者<br>
+                        3. <b>雙老住戶：</b> 兩位皆為60歲或以上的長者同住<br>
+                        4. <b>隱蔽長者：</b> 非社會福利署或長者中心服務對象</p>
+                    </div>
 
-            <label>新會員號碼 (必填)：</label><input type="text" id="newMemNo" class="nm-input" placeholder="例: CWD00888" oninput="this.value = this.value.toUpperCase()">
-            <label>真實姓名 (必填)：</label><input type="text" id="newMemName" class="nm-input" placeholder="全名">
-            <label>身份證號碼 (必填)：</label><input type="text" id="newMemHkid" class="nm-input" placeholder="例: A1234567" oninput="this.value = this.value.toUpperCase()">
-            
-            <label>年齡 (必填)：</label>
-            <input type="number" id="newMemAge" class="nm-input" placeholder="歲數" oninput="checkNewMemberAge()">
-            
-            <label>電話號碼：</label><input type="tel" id="newMemPhone" class="nm-input" placeholder="電話" maxlength="8">
-            <label>居住狀況：</label>
-            <select id="newMemLivingStatus" class="nm-input" style="height: 50px;" onchange="toggleOtherInput('newMemLivingStatus', 'newMemLivingStatusOther')">
-                <option value="獨居">獨居</option>
-                <option value="雙老">雙老</option>
-                <option value="隱蔽長者">隱蔽長者</option>
-                <option value="其他">其他 (請註明)</option>
-            </select>
-            <input type="text" id="newMemLivingStatusOther" class="nm-input" placeholder="請註明居住狀況" style="display: none;">
-            
-            <div class="voucher-box" style="background: #e8f5e9; border-color: #4CAF50;">
-                <label style="color: #2e7d32; font-weight:bold; display:block; margin-bottom:5px;">請輸入S/N(食物劵Number)：</label>
-                <input type="text" id="newMemVoucherInput" class="nm-input" placeholder="S/N" oninput="this.value = this.value.toUpperCase()">
+                    <label>新會員號碼 (必填)：</label><input type="text" id="newMemNo" class="nm-input" placeholder="例: CWD00888" oninput="this.value = this.value.toUpperCase()">
+                    <label>真實姓名 (必填)：</label><input type="text" id="newMemName" class="nm-input" placeholder="全名">
+                    <label>身份證號碼 (必填)：</label><input type="text" id="newMemHkid" class="nm-input" placeholder="例: A1234567" oninput="this.value = this.value.toUpperCase()">
+                    
+                    <label>年齡 (必填)：</label>
+                    <input type="number" id="newMemAge" class="nm-input" placeholder="歲數" oninput="checkNewMemberAge()">
+                    
+                    <label>電話號碼：</label><input type="tel" id="newMemPhone" class="nm-input" placeholder="電話" maxlength="8">
+                    <label>居住狀況：</label>
+                    <select id="newMemLivingStatus" class="nm-input" style="height: 50px;" onchange="toggleOtherInput('newMemLivingStatus', 'newMemLivingStatusOther')">
+                        <option value="獨居">獨居</option>
+                        <option value="雙老">雙老</option>
+                        <option value="隱蔽長者">隱蔽長者</option>
+                        <option value="其他">其他 (請註明)</option>
+                    </select>
+                    <input type="text" id="newMemLivingStatusOther" class="nm-input" placeholder="請註明居住狀況" style="display: none;">
+                    
+                    <div class="voucher-box" style="background: #e8f5e9; border-color: #4CAF50;">
+                        <label style="color: #2e7d32; font-weight:bold; display:block; margin-bottom:5px;">請輸入S/N(食物劵Number)：</label>
+                        <input type="text" id="newMemVoucherInput" class="nm-input" placeholder="S/N" oninput="this.value = this.value.toUpperCase()">
+                    </div>
+                    <button id="newMemConfirmBtn" class="button2">確認入會並派發</button>
+                </div>
             </div>
-            <button id="newMemConfirmBtn" class="button2">確認入會並派發</button>
         </div>
     </div>
 
@@ -424,7 +383,6 @@
             return cleanPhone;
         }
 
-        // 🔥 開關「其他」輸入框嘅函數
         function toggleOtherInput(selectId, inputId) {
             const selectEl = document.getElementById(selectId);
             const inputEl = document.getElementById(inputId);
@@ -530,7 +488,6 @@
                         }
                     }
                     
-                    // 🔥 智能判斷居住狀況，如果係系統預設冇嘅文字，自動跳去「其他」
                     const selectEl = document.getElementById('newStatus');
                     const otherInputEl = document.getElementById('newStatusOther');
                     if (data.livingStatus) {
@@ -596,7 +553,6 @@
 
         window.updateMemberInfo = async function() {
             let s = document.getElementById('newStatus').value;
-            // 🔥 如果揀咗「其他」，就提取輸入框嘅文字
             if (s === '其他') {
                 s = document.getElementById('newStatusOther').value.trim();
                 if (!s) return alert("請輸入「其他」的居住狀況詳情！");
@@ -624,7 +580,6 @@
             const p = document.getElementById('nmPhone').value.trim();
             const v = document.getElementById('nmVoucherInput').value.trim();
             
-            // 🔥 處理非會員的居住狀況
             let s = document.getElementById('nmLivingStatus').value;
             if (s === '其他') {
                 s = document.getElementById('nmLivingStatusOther').value.trim();
@@ -654,7 +609,6 @@
             const p = document.getElementById('newMemPhone').value.trim();
             const v = document.getElementById('newMemVoucherInput').value.trim();
 
-            // 🔥 處理新會員的居住狀況
             let s = document.getElementById('newMemLivingStatus').value;
             if (s === '其他') {
                 s = document.getElementById('newMemLivingStatusOther').value.trim();
