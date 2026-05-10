@@ -124,19 +124,20 @@
         .member-name { font-size: 45px; font-weight: bold; margin-bottom: 5px; color: #000; }
         .member-id-tag { font-size: 22px; color: #666; margin-bottom: 5px; display: block;}
         .member-hkid-tag { font-size: 22px; color: #E65100; margin-bottom: 5px; display: none;}
-        .member-phone-tag { font-size: 22px; color: #1976D2; margin-bottom: 20px; display: none;} /* 🔥 電話顯示樣式 */
+        .member-phone-tag { font-size: 22px; color: #1976D2; margin-bottom: 20px; display: none;}
         
         .warning-msg { display: none; background: #ffebee; border: 2px solid #f44336; color: #c62828; padding: 15px; border-radius: 10px; margin-bottom: 15px; text-align: left; }
         .warning-title { font-size: 20px; font-weight: bold; margin-bottom: 8px; display: block;}
         .warning-text { font-size: 15px; line-height: 1.5; margin: 0;}
         
         .update-box { margin-top: 10px; padding: 15px; border: 2px dashed #90CAF9; font-size: 18px; text-align: left; background: #FAFAFA; border-radius: 10px;}
-        .update-row { margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .update-row { margin-bottom: 15px; display: flex; justify-content: space-between; align-items: flex-start; }
         .status-select { font-size: 18px; padding: 8px; border-radius: 8px; border: 1px solid #ccc; width: 200px; max-width: 100%;}
         .btn-update { padding: 10px 25px; background: #1976D2; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 18px; font-weight: bold;}
         
         .voucher-box { margin-top: 20px; padding: 20px; background: #e3f2fd; border: 2px solid #2196F3; border-radius: 15px;}
         
+        /* 新擬態立體水波動畫按鈕 */
         .button2 {
           display: inline-block;
           transition: all 0.2s ease-in;
@@ -242,7 +243,7 @@
             <div id="ageWarningMsg" class="warning-msg">
                 <span class="warning-title">系統提示：此會員年齡未滿 60 歲</span>
                 <p class="warning-text">受惠長者需為香港居民，並符合以下 <b>任何一項</b> 條件：<br>
-                1. <b>60歲或以上：</b> 持有有效身分證明文件<br>
+                1. <b>60歲或以上：</b> 持有效身分證明文件<br>
                 2. <b>獨居長者：</b> 獨自居住的長者<br>
                 3. <b>雙老住戶：</b> 兩位皆為60歲或以上的長者同住<br>
                 4. <b>隱蔽長者：</b> 非社會福利署或長者中心服務對象</p>
@@ -256,13 +257,17 @@
             <div class="update-box">
                 <div style="color: #1976D2; font-weight: bold; margin-bottom: 10px;">資料更新 (如有需要)</div>
                 <div class="update-row">
-                    <span>居住狀況：</span>
-                    <select id="newStatus" class="status-select">
-                        <option value="">(保持不變)</option>
-                        <option value="獨居">獨居</option>
-                        <option value="雙老">雙老</option>
-                        <option value="隱蔽長者">隱蔽長者</option>
-                    </select>
+                    <span style="margin-top: 8px;">居住狀況：</span>
+                    <div style="display: flex; flex-direction: column; align-items: flex-end; width: 100%; max-width: 200px;">
+                        <select id="newStatus" class="status-select" onchange="toggleOtherInput('newStatus', 'newStatusOther')">
+                            <option value="">(保持不變)</option>
+                            <option value="獨居">獨居</option>
+                            <option value="雙老">雙老</option>
+                            <option value="隱蔽長者">隱蔽長者</option>
+                            <option value="其他">其他 (請註明)</option>
+                        </select>
+                        <input type="text" id="newStatusOther" class="status-select" placeholder="請註明居住狀況" style="display: none; margin-top: 5px;">
+                    </div>
                 </div>
                 <div class="update-row">
                     <span>聯絡電話：</span>
@@ -291,11 +296,14 @@
             <label>身份證：</label><input type="text" id="nmHkid" class="nm-input" placeholder="身份證" oninput="this.value = this.value.toUpperCase()">
             <label>電話：</label><input type="tel" id="nmPhone" class="nm-input" placeholder="電話" maxlength="8">
             <label>居住狀況：</label>
-            <select id="nmLivingStatus" class="nm-input" style="height: 50px;">
+            <select id="nmLivingStatus" class="nm-input" style="height: 50px;" onchange="toggleOtherInput('nmLivingStatus', 'nmLivingStatusOther')">
                 <option value="獨居">獨居</option>
                 <option value="雙老">雙老</option>
                 <option value="隱蔽長者">隱蔽長者</option>
+                <option value="其他">其他 (請註明)</option>
             </select>
+            <input type="text" id="nmLivingStatusOther" class="nm-input" placeholder="請註明居住狀況" style="display: none;">
+            
             <div class="voucher-box" style="background: #fff3e0; border-color: #FF9800;">
                 <label style="color: #e65100; font-weight:bold; display:block; margin-bottom:5px;">請輸入S/N(食物劵Number)：</label>
                 <input type="text" id="nmVoucherInput" class="nm-input" placeholder="S/N" oninput="this.value = this.value.toUpperCase()">
@@ -311,7 +319,7 @@
             <div id="newAgeWarningMsg" class="warning-msg">
                 <span class="warning-title">系統提示：此會員年齡未滿 60 歲</span>
                 <p class="warning-text">受惠長者需為香港居民，並符合以下 <b>任何一項</b> 條件：<br>
-                1. <b>60歲或以上：</b> 持有有效身分證明文件<br>
+                1. <b>60歲或以上：</b> 持有效身分證明文件<br>
                 2. <b>獨居長者：</b> 獨自居住的長者<br>
                 3. <b>雙老住戶：</b> 兩位皆為60歲或以上的長者同住<br>
                 4. <b>隱蔽長者：</b> 非社會福利署或長者中心服務對象</p>
@@ -326,11 +334,14 @@
             
             <label>電話號碼：</label><input type="tel" id="newMemPhone" class="nm-input" placeholder="電話" maxlength="8">
             <label>居住狀況：</label>
-            <select id="newMemLivingStatus" class="nm-input" style="height: 50px;">
+            <select id="newMemLivingStatus" class="nm-input" style="height: 50px;" onchange="toggleOtherInput('newMemLivingStatus', 'newMemLivingStatusOther')">
                 <option value="獨居">獨居</option>
                 <option value="雙老">雙老</option>
                 <option value="隱蔽長者">隱蔽長者</option>
+                <option value="其他">其他 (請註明)</option>
             </select>
+            <input type="text" id="newMemLivingStatusOther" class="nm-input" placeholder="請註明居住狀況" style="display: none;">
+            
             <div class="voucher-box" style="background: #e8f5e9; border-color: #4CAF50;">
                 <label style="color: #2e7d32; font-weight:bold; display:block; margin-bottom:5px;">請輸入S/N(食物劵Number)：</label>
                 <input type="text" id="newMemVoucherInput" class="nm-input" placeholder="S/N" oninput="this.value = this.value.toUpperCase()">
@@ -402,18 +413,28 @@
             return prefix + "****(" + checkDigit + ")";
         }
 
-        // 🔥 電話號碼遮蔽函數：將 12345678 變成 12XX XX78
         function maskPhone(phone) {
             if (!phone) return "";
             let cleanPhone = phone.toString().trim().replace(/[^0-9]/g, '');
-            // 香港電話通常係 8 位數字
             if (cleanPhone.length === 8) {
                 return cleanPhone.substring(0, 2) + "XX XX" + cleanPhone.substring(6, 8);
             } else if (cleanPhone.length > 4) {
-                // 如果長度唔係8位，做個通用處理
                 return cleanPhone.substring(0, 2) + "*".repeat(cleanPhone.length - 4) + cleanPhone.substring(cleanPhone.length - 2);
             }
-            return cleanPhone; // 太短就唔遮
+            return cleanPhone;
+        }
+
+        // 🔥 開關「其他」輸入框嘅函數
+        function toggleOtherInput(selectId, inputId) {
+            const selectEl = document.getElementById(selectId);
+            const inputEl = document.getElementById(inputId);
+            if (selectEl.value === '其他') {
+                inputEl.style.display = 'block';
+                inputEl.focus();
+            } else {
+                inputEl.style.display = 'none';
+                inputEl.value = '';
+            }
         }
 
         const validVoucherRules = ["28601-28613", "28211-28300", "28301-28400", "28401-28500", "28501-28600", "6101-6200", "6201-6300", "6301-6400", "6401-6448", "6046-6100"];
@@ -429,10 +450,15 @@
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             if (id === 'screen-member') setTimeout(() => document.getElementById('barcodeInput').focus(), 100);
-            if (id === 'screen-nonmember') setTimeout(() => document.getElementById('nmName').focus(), 100);
+            if (id === 'screen-nonmember') {
+                document.getElementById('nmLivingStatus').selectedIndex = 0;
+                toggleOtherInput('nmLivingStatus', 'nmLivingStatusOther');
+                setTimeout(() => document.getElementById('nmName').focus(), 100);
+            }
             if (id === 'screen-newmember') {
-                ['newMemNo', 'newMemName', 'newMemHkid', 'newMemAge', 'newMemPhone', 'newMemVoucherInput'].forEach(i => document.getElementById(i).value = '');
+                ['newMemNo', 'newMemName', 'newMemHkid', 'newMemAge', 'newMemPhone', 'newMemVoucherInput', 'newMemLivingStatusOther'].forEach(i => document.getElementById(i).value = '');
                 document.getElementById('newMemLivingStatus').selectedIndex = 0;
+                document.getElementById('newMemLivingStatusOther').style.display = 'none';
                 document.getElementById('newAgeWarningMsg').style.display = 'none';
                 setTimeout(() => document.getElementById('newMemNo').focus(), 100);
             }
@@ -489,7 +515,6 @@
                         document.getElementById('dispHkid').style.display = "none";
                     }
 
-                    // 🔥 顯示並遮蔽聯絡電話 (優先顯示 updatedPhone，如果冇就顯示 phone)
                     const activePhone = data.updatedPhone || data.phone;
                     if (activePhone && activePhone.trim() !== "") {
                         document.getElementById('dispPhone').innerText = "電話: " + maskPhone(activePhone);
@@ -505,17 +530,30 @@
                         }
                     }
                     
-                    // 將下拉選單預設為系統入面嘅現有居住狀況
+                    // 🔥 智能判斷居住狀況，如果係系統預設冇嘅文字，自動跳去「其他」
+                    const selectEl = document.getElementById('newStatus');
+                    const otherInputEl = document.getElementById('newStatusOther');
                     if (data.livingStatus) {
-                        const selectEl = document.getElementById('newStatus');
+                        let found = false;
                         for (let i = 0; i < selectEl.options.length; i++) {
                             if (selectEl.options[i].value === data.livingStatus) {
                                 selectEl.selectedIndex = i;
+                                found = true;
                                 break;
                             }
                         }
+                        if (!found) {
+                            selectEl.value = '其他';
+                            otherInputEl.style.display = 'block';
+                            otherInputEl.value = data.livingStatus;
+                        } else {
+                            otherInputEl.style.display = 'none';
+                            otherInputEl.value = '';
+                        }
                     } else {
-                        document.getElementById('newStatus').selectedIndex = 0;
+                        selectEl.selectedIndex = 0;
+                        otherInputEl.style.display = 'none';
+                        otherInputEl.value = '';
                     }
                     
                     if (data.hasClaimed) {
@@ -557,7 +595,13 @@
         };
 
         window.updateMemberInfo = async function() {
-            const s = document.getElementById('newStatus').value;
+            let s = document.getElementById('newStatus').value;
+            // 🔥 如果揀咗「其他」，就提取輸入框嘅文字
+            if (s === '其他') {
+                s = document.getElementById('newStatusOther').value.trim();
+                if (!s) return alert("請輸入「其他」的居住狀況詳情！");
+            }
+            
             const p = document.getElementById('newPhone').value.trim();
             if(!s && !p) return alert("請先填寫要更新的資料");
             let up = { statusUpdateTime: new Date().toISOString() };
@@ -565,7 +609,6 @@
             if (p) up.updatedPhone = p;
             await currentTargetRef.update(up);
             
-            // 更新畫面顯示嘅電話
             if (p) {
                 document.getElementById('dispPhone').innerText = "電話: " + maskPhone(p);
                 document.getElementById('dispPhone').style.display = "block";
@@ -579,10 +622,16 @@
             const name = document.getElementById('nmName').value.trim();
             const hkid = document.getElementById('nmHkid').value.trim().toUpperCase();
             const p = document.getElementById('nmPhone').value.trim();
-            const s = document.getElementById('nmLivingStatus').value;
             const v = document.getElementById('nmVoucherInput').value.trim();
+            
+            // 🔥 處理非會員的居住狀況
+            let s = document.getElementById('nmLivingStatus').value;
+            if (s === '其他') {
+                s = document.getElementById('nmLivingStatusOther').value.trim();
+                if (!s) return alert("請輸入「其他」的居住狀況詳情！");
+            }
 
-            if(!name || !hkid || !p || !v) return alert("請填寫所有欄位");
+            if(!name || !hkid || !p || !v || !s) return alert("請填寫所有欄位");
             if (!validVoucherSet.has(v)) return alert("S/N(食物劵Number)無效！");
             
             const dupHkid = await db.collection('non_members').doc(hkid).get();
@@ -603,10 +652,16 @@
             const hkid = document.getElementById('newMemHkid').value.trim().toUpperCase();
             const age = document.getElementById('newMemAge').value.trim();
             const p = document.getElementById('newMemPhone').value.trim();
-            const s = document.getElementById('newMemLivingStatus').value;
             const v = document.getElementById('newMemVoucherInput').value.trim();
 
-            if(!no || !name || !hkid || !age || !v) return alert("請填寫所有必填欄位！");
+            // 🔥 處理新會員的居住狀況
+            let s = document.getElementById('newMemLivingStatus').value;
+            if (s === '其他') {
+                s = document.getElementById('newMemLivingStatusOther').value.trim();
+                if (!s) return alert("請輸入「其他」的居住狀況詳情！");
+            }
+
+            if(!no || !name || !hkid || !age || !v || !s) return alert("請填寫所有必填欄位！");
             if (!validVoucherSet.has(v)) return alert("S/N(食物劵Number)無效！");
             
             const dupMem = await db.collection('members').doc(no).get();
