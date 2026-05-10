@@ -2,6 +2,7 @@
 <html lang="zh-HK">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>聖雅各福群會 中西區長者地區中心 - 「愛心食肆賞你惠食」第五輪</title>
     <meta name="robots" content="noindex, nofollow">
     
@@ -11,59 +12,90 @@
     <style>
         *, *::before, *::after { box-sizing: border-box; }
 
-        body { font-family: 'PingFang HK', 'Microsoft JhengHei', sans-serif; text-align: center; padding: 20px; margin: 0; min-height: 100vh; background-color: #f0f2f5; transition: background-color 0.3s;}
+        body { font-family: 'PingFang HK', 'Microsoft JhengHei', sans-serif; text-align: center; padding: 20px 10px; margin: 0; min-height: 100vh; background-color: #f0f2f5; transition: background-color 0.3s;}
         h1 { color: #333; margin-bottom: 15px;}
         .screen { display: none; } .screen.active { display: block; }
         
-        .login-container { background: white; max-width: 500px; margin: 80px auto; padding: 40px 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .login-container { background: white; max-width: 500px; width: 95%; margin: 80px auto; padding: 40px 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
         .login-input { font-size: 24px; padding: 15px; width: 100%; text-align: center; border: 2px solid #ccc; border-radius: 10px; margin-bottom: 20px; outline: none;}
         .btn-login { background-color: #1976D2; color: white; font-size: 24px; padding: 15px; width: 100%; border: none; border-radius: 10px; cursor: pointer; font-weight: bold;}
 
-        #dashboard { display: none; background-color: #333; color: white; padding: 15px 40px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); text-align: center; }
-        .dash-stats { font-size: 24px; font-weight: bold; }
+        #dashboard { display: none; background-color: #333; color: white; padding: 15px 20px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); text-align: center; max-width: 800px; margin-left: auto; margin-right: auto;}
+        .dash-stats { font-size: 22px; font-weight: bold; }
         .text-blue { color: #42A5F5; } .text-orange { color: #FFCA28; } .text-green { color: #66BB6A; }
         
-        .menu-btn { font-size: 35px; padding: 30px; margin: 15px; width: 40%; min-width: 300px; border-radius: 20px; border: none; cursor: pointer; font-weight: bold; box-shadow: 0 10px 20px rgba(0,0,0,0.1); transition: transform 0.2s; display: inline-block;}
+        .menu-btn { font-size: 30px; padding: 25px; margin: 10px; width: 30%; min-width: 280px; border-radius: 20px; border: none; cursor: pointer; font-weight: bold; box-shadow: 0 10px 20px rgba(0,0,0,0.1); transition: transform 0.2s; display: inline-block;}
         .btn-member { background-color: #2196F3; color: white; }
         .btn-nonmember { background-color: #FF9800; color: white; }
         .btn-newmember { background-color: #009688; color: white; }
         
-        .back-btn { position: absolute; top: 20px; left: 20px; font-size: 18px; padding: 10px 20px; background: #607D8B; color: white; border: none; border-radius: 10px; cursor: pointer;}
+        .back-btn { display: inline-block; font-size: 18px; padding: 10px 20px; background: #607D8B; color: white; border: none; border-radius: 10px; cursor: pointer; margin-bottom: 20px;}
         
-        .main-input { font-size: 26px; padding: 15px; width: 100%; text-align: center; border: 3px solid #ccc; border-radius: 10px; outline: none; text-transform: uppercase;}
-        .result-card { display: none; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); max-width: 800px; margin: auto; }
-        .status-msg { font-size: 35px; font-weight: bold; margin-bottom: 10px; }
-        .member-name { font-size: 55px; font-weight: bold; margin-bottom: 5px; color: #000; }
-        .member-id-tag { font-size: 24px; color: #666; margin-bottom: 20px; display: block;}
+        .search-group { display: flex; justify-content: center; max-width: 600px; margin: 0 auto 20px auto; gap: 10px; width: 95%;}
+        .main-input { font-size: 24px; padding: 15px; width: 100%; text-align: center; border: 3px solid #ccc; border-radius: 10px; outline: none; text-transform: uppercase;}
+        #searchMemberBtn { padding: 0 20px; border-radius: 10px; border: none; background: #607D8B; color: white; font-size: 20px; cursor: pointer; white-space: nowrap;}
+        
+        .result-card { display: none; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); max-width: 800px; width: 95%; margin: auto; }
+        .status-msg { font-size: 30px; font-weight: bold; margin-bottom: 10px; }
+        .member-name { font-size: 45px; font-weight: bold; margin-bottom: 5px; color: #000; }
+        .member-id-tag { font-size: 22px; color: #666; margin-bottom: 20px; display: block;}
         
         .warning-msg { display: none; background: #ffebee; border: 2px solid #f44336; color: #c62828; padding: 15px; border-radius: 10px; margin-bottom: 15px; text-align: left; }
-        .warning-title { font-size: 22px; font-weight: bold; margin-bottom: 8px; display: block;}
-        .warning-text { font-size: 16px; line-height: 1.5; margin: 0;}
+        .warning-title { font-size: 20px; font-weight: bold; margin-bottom: 8px; display: block;}
+        .warning-text { font-size: 15px; line-height: 1.5; margin: 0;}
         
-        .update-box { margin-top: 10px; padding: 15px; border: 2px dashed #90CAF9; font-size: 20px; text-align: left; background: #FAFAFA; border-radius: 10px;}
+        .update-box { margin-top: 10px; padding: 15px; border: 2px dashed #90CAF9; font-size: 18px; text-align: left; background: #FAFAFA; border-radius: 10px;}
         .update-row { margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .status-select { font-size: 20px; padding: 8px; border-radius: 8px; border: 1px solid #ccc; width: 200px;}
+        .status-select { font-size: 18px; padding: 8px; border-radius: 8px; border: 1px solid #ccc; width: 200px; max-width: 100%;}
         .btn-update { padding: 10px 25px; background: #1976D2; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 18px; font-weight: bold;}
         
         .voucher-box { margin-top: 20px; padding: 20px; background: #e3f2fd; border: 2px solid #2196F3; border-radius: 15px;}
-        .btn-confirm { background-color: #4CAF50; color: white; width: 100%; font-size: 30px; padding: 15px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; margin-top: 20px;}
-        .btn-cancel { background-color: #9e9e9e; color: white; font-size: 20px; width: 100%; padding: 10px; border: none; border-radius: 10px; cursor: pointer; margin-top: 10px;}
+        .btn-confirm { background-color: #4CAF50; color: white; width: 100%; font-size: 26px; padding: 15px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; margin-top: 20px;}
+        .btn-cancel { background-color: #9e9e9e; color: white; font-size: 20px; width: 100%; padding: 12px; border: none; border-radius: 10px; cursor: pointer; margin-top: 10px;}
         
-        .nm-form { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); max-width: 600px; margin: auto; }
-        .nm-form label { display: block; font-size: 20px; font-weight: bold; text-align: left; margin-top: 15px; color: #333;}
-        .nm-input { font-size: 24px; padding: 12px; width: 100%; border: 2px solid #ccc; border-radius: 10px; margin-top: 8px; outline: none;}
+        .nm-form { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); max-width: 600px; width: 95%; margin: auto; }
+        .nm-form label { display: block; font-size: 18px; font-weight: bold; text-align: left; margin-top: 15px; color: #333;}
+        .nm-input { font-size: 20px; padding: 12px; width: 100%; border: 2px solid #ccc; border-radius: 10px; margin-top: 8px; outline: none;}
 
         .text-red { color: #f44336; } .text-green { color: #4CAF50; } .text-orange { color: #FF9800; }
+
+        /* 🔥 RWD 手機及平板排版優化 (當螢幕細過 768px 時生效) */
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .login-container, .nm-form, .result-card { padding: 20px 15px; margin-top: 20px; }
+            h1 { font-size: 28px !important; margin-bottom: 20px !important; }
+            h2 { font-size: 22px !important; }
+            .screen-home-title { font-size: 18px !important; }
+            
+            /* 選單按鈕變直排，佔滿全畫面 */
+            .menu-btn { width: 100%; min-width: unset; margin: 10px 0; font-size: 24px; padding: 20px; display: block; }
+            
+            /* Dashboard 字縮細 */
+            .dash-stats { font-size: 16px; }
+            
+            /* 輸入框及按鈕縮細 */
+            .main-input, .nm-input, .login-input { font-size: 18px; padding: 12px; }
+            .btn-login, .btn-confirm { font-size: 22px; padding: 12px; }
+            #searchMemberBtn { font-size: 16px; padding: 0 15px; }
+            
+            .member-name { font-size: 35px; }
+            .status-msg { font-size: 24px; }
+            
+            /* 資料更新區變直排 */
+            .update-row { flex-direction: column; align-items: flex-start; gap: 8px;}
+            .status-select { width: 100%; }
+            .btn-update { width: 100%; margin-top: 10px;}
+        }
     </style>
 </head>
 <body>
 
     <div id="screen-login" class="screen active">
         <div class="login-container">
-            <div style="font-size: 20px; color: #666; font-weight: bold; margin-bottom: 5px;">聖雅各福群會 中西區長者地區中心</div>
-            <div style="font-size: 32px; color: #E65100; font-weight: bold; margin-bottom: 25px;">「愛心食肆賞你惠食」第五輪</div>
+            <div class="screen-home-title" style="color: #666; font-weight: bold; margin-bottom: 5px;">聖雅各福群會 中西區長者地區中心</div>
+            <h1 style="color: #E65100; font-weight: bold; margin-bottom: 25px; margin-top: 5px;">「愛心食肆賞你惠食」第五輪</h1>
             
-            <h2 style="font-size: 26px; color: #1565c0; margin-top: 0;">🔒 系統登入</h2>
+            <h2 style="color: #1565c0; margin-top: 0;">🔒 系統登入</h2>
             <input type="password" id="loginPwd" class="login-input" placeholder="輸入職員密碼...">
             <button onclick="checkLogin()" class="btn-login">進入系統</button>
         </div>
@@ -73,15 +105,15 @@
         <div class="dash-stats">
             會員：<span id="memberCount" class="text-blue">--</span> / 650 &nbsp;|&nbsp; 
             非會員：<span id="nonMemberCount" class="text-orange">--</span> / 150 &nbsp;|&nbsp;
-            已派總數：<span id="totalCount" class="text-green">--</span> / 800
+            已派：<span id="totalCount" class="text-green">--</span> / 800
         </div>
-    </div><br>
+    </div>
 
     <div id="screen-home" class="screen">
-        <div style="font-size: 24px; color: #666; font-weight: bold; margin-bottom: 10px; margin-top: 20px;">聖雅各福群會 中西區長者地區中心</div>
-        <h1 style="font-size: 45px; color: #E65100; margin-top: 0; margin-bottom: 40px;">「愛心食肆賞你惠食」第五輪</h1>
+        <div class="screen-home-title" style="font-size: 24px; color: #666; font-weight: bold; margin-bottom: 10px; margin-top: 20px;">聖雅各福群會 中西區長者地區中心</div>
+        <h1 style="font-size: 40px; color: #E65100; margin-top: 0; margin-bottom: 30px;">「愛心食肆賞你惠食」第五輪</h1>
         
-        <h2 style="font-size: 35px; color: #333;">請選擇領取者類別</h2>
+        <h2 style="font-size: 30px; color: #333; margin-bottom: 20px;">請選擇領取者類別</h2>
         <div style="display: flex; justify-content: center; flex-wrap: wrap; max-width: 900px; margin: auto;">
             <button class="menu-btn btn-member" onclick="switchScreen('screen-member')">👤 中心會員</button>
             <button class="menu-btn btn-nonmember" onclick="switchScreen('screen-nonmember')">🚶 非會員</button>
@@ -92,9 +124,9 @@
     <div id="screen-member" class="screen">
         <button class="back-btn" onclick="switchScreen('screen-home')">🔙 返回首頁</button>
         <h1>🎁 會員領取登記</h1>
-        <div style="display: flex; justify-content: center; max-width: 600px; margin: 0 auto 20px auto;">
+        <div class="search-group">
             <input type="text" id="barcodeInput" class="main-input" placeholder="掃描會員證或輸入編號..." autocomplete="off" oninput="this.value = this.value.toUpperCase()">
-            <button id="searchMemberBtn" style="padding:0 20px; margin-left:10px; border-radius:10px; border:none; background:#607D8B; color:white; font-size:20px; cursor:pointer;">搜尋</button>
+            <button id="searchMemberBtn">搜尋</button>
         </div>
         
         <div id="resultCard" class="result-card">
@@ -106,7 +138,7 @@
                 1. <b>60歲或以上：</b> 持有有效身分證明文件<br>
                 2. <b>獨居長者：</b> 獨自居住的長者<br>
                 3. <b>雙老住戶：</b> 兩位皆為60歲或以上的長者同住<br>
-                4. <b>隱蔽長者：</b> 非社會福利署或長者中心服務對象，但生活有需要者</p>
+                4. <b>隱蔽長者：</b> 非社會福利署或長者中心服務對象</p>
             </div>
 
             <div class="member-name" id="dispName"></div>
@@ -133,7 +165,7 @@
             </div>
             
             <div class="voucher-box" id="voucherSection">
-                <label style="font-size: 22px; font-weight: bold; color: #1565c0; display: block; margin-bottom: 10px;">🏷️ 請掃描洗水號：</label>
+                <label style="font-size: 20px; font-weight: bold; color: #1565c0; display: block; margin-bottom: 10px;">🏷️ 請掃描洗水號：</label>
                 <input type="text" id="voucherInput" class="main-input" placeholder="例如: 28601..." autocomplete="off" oninput="this.value = this.value.toUpperCase()">
             </div>
             
@@ -156,7 +188,7 @@
                 <option value="隱蔽長者">隱蔽長者</option>
             </select>
             <div class="voucher-box" style="background: #fff3e0; border-color: #FF9800;">
-                <label style="color: #e65100; font-weight:bold;">🏷️ 請掃描洗水號：</label>
+                <label style="color: #e65100; font-weight:bold; display:block; margin-bottom:5px;">🏷️ 請掃描洗水號：</label>
                 <input type="text" id="nmVoucherInput" class="nm-input" placeholder="洗水號" oninput="this.value = this.value.toUpperCase()">
             </div>
             <button id="nmConfirmBtn" class="btn-confirm" style="background:#FF9800;">確認派發</button>
@@ -173,7 +205,7 @@
                 1. <b>60歲或以上：</b> 持有有效身分證明文件<br>
                 2. <b>獨居長者：</b> 獨自居住的長者<br>
                 3. <b>雙老住戶：</b> 兩位皆為60歲或以上的長者同住<br>
-                4. <b>隱蔽長者：</b> 非社會福利署或長者中心服務對象，但生活有需要者</p>
+                4. <b>隱蔽長者：</b> 非社會福利署或長者中心服務對象</p>
             </div>
 
             <label>新會員號碼 (必填)：</label><input type="text" id="newMemNo" class="nm-input" placeholder="例: CWD00888" oninput="this.value = this.value.toUpperCase()">
@@ -191,7 +223,7 @@
                 <option value="隱蔽長者">隱蔽長者</option>
             </select>
             <div class="voucher-box" style="background: #e8f5e9; border-color: #4CAF50;">
-                <label style="color: #2e7d32; font-weight:bold;">🏷️ 請掃描洗水號：</label>
+                <label style="color: #2e7d32; font-weight:bold; display:block; margin-bottom:5px;">🏷️ 請掃描洗水號：</label>
                 <input type="text" id="newMemVoucherInput" class="nm-input" placeholder="洗水號" oninput="this.value = this.value.toUpperCase()">
             </div>
             <button id="newMemConfirmBtn" class="btn-confirm" style="background:#4CAF50;">確認入會並派發</button>
@@ -200,7 +232,7 @@
 
     <script>
         // ==================== 1. 登入設定 ====================
-        const STAFF_PASSWORD = "CWD2026"; 
+        const STAFF_PASSWORD = "CwdeccTeama1234"; 
         
         function checkLogin() {
             if (document.getElementById('loginPwd').value === STAFF_PASSWORD) {
@@ -217,7 +249,6 @@
         
         if (sessionStorage.getItem('isStaffLoggedIn') === 'true') showMainSystem();
         
-        // 確保可以撳 Enter 登入
         document.getElementById('loginPwd').onkeypress = function(e) { 
             if(e.key === 'Enter') checkLogin(); 
         };
