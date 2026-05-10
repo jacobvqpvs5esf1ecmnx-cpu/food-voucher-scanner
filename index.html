@@ -16,9 +16,6 @@
         h1 { color: #333; margin-bottom: 15px;}
         .screen { display: none; } .screen.active { display: block; }
         
-        /* ========================================= */
-        /* 🔥 全新登入畫面 CSS (新擬態 + 懸浮標籤) */
-        /* ========================================= */
         .card {
           display: flex;
           justify-content: center;
@@ -35,10 +32,7 @@
           padding: 40px 20px;
         }
 
-        .login-title-group {
-          text-align: center;
-          width: 100%;
-        }
+        .login-title-group { text-align: center; width: 100%; }
 
         .login {
           color: #1565c0;
@@ -49,10 +43,7 @@
           margin-top: 15px;
         }
 
-        .inputBox {
-          position: relative;
-          width: 250px;
-        }
+        .inputBox { position: relative; width: 250px; }
 
         .inputBox input {
           width: 100%;
@@ -83,7 +74,6 @@
           border-radius: 8px;
         }
 
-        /* 必須有 required 屬性，呢個 :valid 技巧先會生效 */
         .inputBox input:valid~span,
         .inputBox input:focus~span {
           transform: translateX(110px) translateY(-15px);
@@ -96,10 +86,7 @@
         }
 
         .inputBox input:valid,
-        .inputBox input:focus {
-          border: 2px solid #000;
-          border-radius: 8px;
-        }
+        .inputBox input:focus { border: 2px solid #000; border-radius: 8px; }
 
         .enter {
           height: 45px;
@@ -115,11 +102,7 @@
           margin-bottom: 1em;
         }
 
-        .enter:hover {
-          background-color: rgb(0, 0, 0);
-          color: white;
-        }
-        /* ========================================= */
+        .enter:hover { background-color: rgb(0, 0, 0); color: white; }
 
         #dashboard { display: none; background-color: #333; color: white; padding: 15px 20px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); text-align: center; max-width: 800px; margin-left: auto; margin-right: auto;}
         .dash-stats { font-size: 22px; font-weight: bold; }
@@ -139,7 +122,8 @@
         .result-card { display: none; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); max-width: 800px; width: 95%; margin: auto; }
         .status-msg { font-size: 30px; font-weight: bold; margin-bottom: 10px; }
         .member-name { font-size: 45px; font-weight: bold; margin-bottom: 5px; color: #000; }
-        .member-id-tag { font-size: 22px; color: #666; margin-bottom: 20px; display: block;}
+        .member-id-tag { font-size: 22px; color: #666; margin-bottom: 5px; display: block;}
+        .member-hkid-tag { font-size: 22px; color: #E65100; margin-bottom: 20px; display: none;} /* 🔥 身份證顯示樣式 */
         
         .warning-msg { display: none; background: #ffebee; border: 2px solid #f44336; color: #c62828; padding: 15px; border-radius: 10px; margin-bottom: 15px; text-align: left; }
         .warning-title { font-size: 20px; font-weight: bold; margin-bottom: 8px; display: block;}
@@ -152,7 +136,7 @@
         
         .voucher-box { margin-top: 20px; padding: 20px; background: #e3f2fd; border: 2px solid #2196F3; border-radius: 15px;}
         
-        /* 主系統內的新擬態立體水波動畫按鈕 */
+        /* 新擬態立體水波動畫按鈕 */
         .button2 {
           display: inline-block;
           transition: all 0.2s ease-in;
@@ -266,6 +250,7 @@
 
             <div class="member-name" id="dispName"></div>
             <b class="member-id-tag" id="dispNo"></b>
+            <b class="member-hkid-tag" id="dispHkid"></b>
             
             <div class="update-box">
                 <div style="color: #1976D2; font-weight: bold; margin-bottom: 10px;">資料更新 (如有需要)</div>
@@ -279,7 +264,7 @@
                     </select>
                 </div>
                 <div class="update-row">
-                    <span>聯絡電話：</span>
+                    <span>新聯絡電話：</span>
                     <input type="tel" id="newPhone" class="status-select" placeholder="輸入 8 位電話" maxlength="8">
                 </div>
                 <div style="text-align: right;">
@@ -354,7 +339,6 @@
     </div>
 
     <script>
-        // 登入設定 (新密碼)
         const STAFF_PASSWORD = "CwdeccTeama1234"; 
         
         function checkLogin() {
@@ -376,7 +360,6 @@
             if(e.key === 'Enter') checkLogin(); 
         };
 
-        // Firebase 初始化
         const firebaseConfig = {
             apiKey: "AIzaSyBkYaOS6YFapXxt4UTwTy3bkK-C_f50hWw",
             authDomain: "food-voucher-2026.firebaseapp.com",
@@ -388,9 +371,39 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
+        // 姓名遮蔽
         function maskName(name) {
-            if (!name || name.length < 2) return name;
-            return name.charAt(0) + "*".repeat(name.length - 2) + name.charAt(name.length - 1);
+            if (!name) return "";
+            name = name.trim();
+            if (/[a-zA-Z]/.test(name)) {
+                let parts = name.split(' ');
+                if (parts.length > 1) {
+                    let maskedParts = parts.map((part, index) => {
+                        if (index === 0) return part;
+                        return part.length > 0 ? part.charAt(0) + "*".repeat(part.length - 1) : part;
+                    });
+                    return maskedParts.join(' ');
+                } else {
+                    return name.length > 2 ? name.substring(0, 2) + "*".repeat(name.length - 2) : name.charAt(0) + "*";
+                }
+            } else {
+                if (name.length === 1) return "*";
+                if (name.length === 2) return "*" + name.charAt(1);
+                return name.charAt(0) + "*".repeat(name.length - 2) + name.charAt(name.length - 1);
+            }
+        }
+
+        // 🔥 身份證遮蔽函數：將 A1234567 變成 A12****(7)
+        function maskHkid(hkid) {
+            if (!hkid) return "";
+            // 移除所有括號和空格，只保留字母和數字 (例如 A1234567)
+            let clean = hkid.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+            if (clean.length < 8) return hkid; // 如果格式不齊全，直接顯示原樣防錯
+            
+            let prefix = clean.substring(0, 3); // 攞頭 3 個字 (例如 A12)
+            let checkDigit = clean.substring(clean.length - 1); // 攞最後 1 個字 (例如 7)
+            
+            return prefix + "****(" + checkDigit + ")";
         }
 
         const validVoucherRules = ["28601-28613", "28211-28300", "28301-28400", "28401-28500", "28501-28600", "6101-6200", "6201-6300", "6301-6400", "6401-6448", "6046-6100"];
@@ -458,6 +471,14 @@
                     document.getElementById('resultCard').style.display = "block";
                     document.getElementById('dispName').innerText = maskName(data.name);
                     document.getElementById('dispNo').innerText = "會員編號: " + data.memberNo;
+                    
+                    // 🔥 如果有身份證資料，顯示遮蔽後的身份證
+                    if (data.hkid && data.hkid.trim() !== "") {
+                        document.getElementById('dispHkid').innerText = "身份證: " + maskHkid(data.hkid);
+                        document.getElementById('dispHkid').style.display = "block";
+                    } else {
+                        document.getElementById('dispHkid').style.display = "none";
+                    }
                     
                     if (data.age) {
                         const ageNum = parseInt(data.age, 10);
