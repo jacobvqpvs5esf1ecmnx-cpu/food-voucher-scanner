@@ -16,7 +16,6 @@
         h1 { color: #333; margin-bottom: 15px;}
         .screen { display: none; } .screen.active { display: block; }
         
-        /* 登入畫面 CSS (新擬態 + 懸浮標籤) */
         .card {
           display: flex;
           justify-content: center;
@@ -124,7 +123,8 @@
         .status-msg { font-size: 30px; font-weight: bold; margin-bottom: 10px; }
         .member-name { font-size: 45px; font-weight: bold; margin-bottom: 5px; color: #000; }
         .member-id-tag { font-size: 22px; color: #666; margin-bottom: 5px; display: block;}
-        .member-hkid-tag { font-size: 22px; color: #E65100; margin-bottom: 20px; display: none;}
+        .member-hkid-tag { font-size: 22px; color: #E65100; margin-bottom: 5px; display: none;}
+        .member-phone-tag { font-size: 22px; color: #1976D2; margin-bottom: 20px; display: none;} /* 🔥 電話顯示樣式 */
         
         .warning-msg { display: none; background: #ffebee; border: 2px solid #f44336; color: #c62828; padding: 15px; border-radius: 10px; margin-bottom: 15px; text-align: left; }
         .warning-title { font-size: 20px; font-weight: bold; margin-bottom: 8px; display: block;}
@@ -137,7 +137,6 @@
         
         .voucher-box { margin-top: 20px; padding: 20px; background: #e3f2fd; border: 2px solid #2196F3; border-radius: 15px;}
         
-        /* 新擬態立體水波動畫按鈕 (button2) */
         .button2 {
           display: inline-block;
           transition: all 0.2s ease-in;
@@ -252,6 +251,7 @@
             <div class="member-name" id="dispName"></div>
             <b class="member-id-tag" id="dispNo"></b>
             <b class="member-hkid-tag" id="dispHkid"></b>
+            <b class="member-phone-tag" id="dispPhone"></b>
             
             <div class="update-box">
                 <div style="color: #1976D2; font-weight: bold; margin-bottom: 10px;">資料更新 (如有需要)</div>
@@ -265,7 +265,7 @@
                     </select>
                 </div>
                 <div class="update-row">
-                    <span>新聯絡電話：</span>
+                    <span>聯絡電話：</span>
                     <input type="tel" id="newPhone" class="status-select" placeholder="輸入 8 位電話" maxlength="8">
                 </div>
                 <div style="text-align: right;">
@@ -340,7 +340,6 @@
     </div>
 
     <script>
-        // 登入設定
         const STAFF_PASSWORD = "CwdeccTeama1234"; 
         
         function checkLogin() {
@@ -362,7 +361,6 @@
             if(e.key === 'Enter') checkLogin(); 
         };
 
-        // Firebase 初始化
         const firebaseConfig = {
             apiKey: "AIzaSyBkYaOS6YFapXxt4UTwTy3bkK-C_f50hWw",
             authDomain: "food-voucher-2026.firebaseapp.com",
@@ -374,7 +372,6 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // 中英文智能姓名遮蔽
         function maskName(name) {
             if (!name) return "";
             name = name.trim();
@@ -396,7 +393,6 @@
             }
         }
 
-        // 身份證遮蔽
         function maskHkid(hkid) {
             if (!hkid) return "";
             let clean = hkid.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
@@ -406,7 +402,20 @@
             return prefix + "****(" + checkDigit + ")";
         }
 
-        // S/N (食物劵號碼) 驗證規則
+        // 🔥 電話號碼遮蔽函數：將 12345678 變成 12XX XX78
+        function maskPhone(phone) {
+            if (!phone) return "";
+            let cleanPhone = phone.toString().trim().replace(/[^0-9]/g, '');
+            // 香港電話通常係 8 位數字
+            if (cleanPhone.length === 8) {
+                return cleanPhone.substring(0, 2) + "XX XX" + cleanPhone.substring(6, 8);
+            } else if (cleanPhone.length > 4) {
+                // 如果長度唔係8位，做個通用處理
+                return cleanPhone.substring(0, 2) + "*".repeat(cleanPhone.length - 4) + cleanPhone.substring(cleanPhone.length - 2);
+            }
+            return cleanPhone; // 太短就唔遮
+        }
+
         const validVoucherRules = ["28601-28613", "28211-28300", "28301-28400", "28401-28500", "28501-28600", "6101-6200", "6201-6300", "6301-6400", "6401-6448", "6046-6100"];
         const validVoucherSet = new Set();
         validVoucherRules.forEach(r => {
@@ -479,12 +488,34 @@
                     } else {
                         document.getElementById('dispHkid').style.display = "none";
                     }
+
+                    // 🔥 顯示並遮蔽聯絡電話 (優先顯示 updatedPhone，如果冇就顯示 phone)
+                    const activePhone = data.updatedPhone || data.phone;
+                    if (activePhone && activePhone.trim() !== "") {
+                        document.getElementById('dispPhone').innerText = "電話: " + maskPhone(activePhone);
+                        document.getElementById('dispPhone').style.display = "block";
+                    } else {
+                        document.getElementById('dispPhone').style.display = "none";
+                    }
                     
                     if (data.age) {
                         const ageNum = parseInt(data.age, 10);
                         if (!isNaN(ageNum) && ageNum < 60) {
                             document.getElementById('ageWarningMsg').style.display = "block";
                         }
+                    }
+                    
+                    // 將下拉選單預設為系統入面嘅現有居住狀況
+                    if (data.livingStatus) {
+                        const selectEl = document.getElementById('newStatus');
+                        for (let i = 0; i < selectEl.options.length; i++) {
+                            if (selectEl.options[i].value === data.livingStatus) {
+                                selectEl.selectedIndex = i;
+                                break;
+                            }
+                        }
+                    } else {
+                        document.getElementById('newStatus').selectedIndex = 0;
                     }
                     
                     if (data.hasClaimed) {
@@ -533,8 +564,14 @@
             if (s) up.livingStatus = s;
             if (p) up.updatedPhone = p;
             await currentTargetRef.update(up);
+            
+            // 更新畫面顯示嘅電話
+            if (p) {
+                document.getElementById('dispPhone').innerText = "電話: " + maskPhone(p);
+                document.getElementById('dispPhone').style.display = "block";
+            }
+            
             alert("資料已儲存，將會反映在匯出報告中。");
-            document.getElementById('newStatus').value = "";
             document.getElementById('newPhone').value = "";
         };
 
