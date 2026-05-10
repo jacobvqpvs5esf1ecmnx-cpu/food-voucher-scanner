@@ -10,6 +10,77 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     
     <style>
+                /* 🔥 新增的超靚立體水波動畫按鈕 */
+                .button2 {
+          display: inline-block;
+          transition: all 0.2s ease-in;
+          position: relative;
+          overflow: hidden;
+          z-index: 1;
+          color: #090909;
+          padding: 0.7em 1.7em;
+          cursor: pointer;
+          font-size: 26px; /* 我幫你稍微調大咗少少字體，等手機易撳啲 */
+          font-weight: bold;
+          border-radius: 0.5em;
+          background: #f0f2f5; /* 配合你系統原本的背景色 */
+          border: 1px solid #f0f2f5;
+          box-shadow: 6px 6px 12px #c5c5c5, -6px -6px 12px #ffffff;
+          width: 100%;
+          margin-top: 20px;
+        }
+
+        .button2:active {
+          color: #666;
+          box-shadow: inset 4px 4px 12px #c5c5c5, inset -4px -4px 12px #ffffff;
+        }
+
+        .button2:before {
+          content: "";
+          position: absolute;
+          left: 50%;
+          transform: translateX(-50%) scaleY(1) scaleX(1.25);
+          top: 100%;
+          width: 140%;
+          height: 180%;
+          background-color: rgba(0, 0, 0, 0.05);
+          border-radius: 50%;
+          display: block;
+          transition: all 0.5s 0.1s cubic-bezier(0.55, 0, 0.1, 1);
+          z-index: -1;
+        }
+
+        .button2:after {
+          content: "";
+          position: absolute;
+          left: 55%;
+          transform: translateX(-50%) scaleY(1) scaleX(1.45);
+          top: 180%;
+          width: 160%;
+          height: 190%;
+          background-color: #4CAF50; /* 我將原本嘅青色改做你系統嘅「確認綠色」 */
+          border-radius: 50%;
+          display: block;
+          transition: all 0.5s 0.1s cubic-bezier(0.55, 0, 0.1, 1);
+          z-index: -1;
+        }
+
+        .button2:hover {
+          color: #ffffff;
+          border: 1px solid #4CAF50;
+        }
+
+        .button2:hover:before {
+          top: -35%;
+          background-color: #4CAF50;
+          transform: translateX(-50%) scaleY(1.3) scaleX(0.8);
+        }
+
+        .button2:hover:after {
+          top: -45%;
+          background-color: #4CAF50;
+          transform: translateX(-50%) scaleY(1.3) scaleX(0.8);
+        }
         *, *::before, *::after { box-sizing: border-box; }
 
         body { font-family: 'PingFang HK', 'Microsoft JhengHei', sans-serif; text-align: center; padding: 20px 10px; margin: 0; min-height: 100vh; background-color: #f0f2f5; transition: background-color 0.3s;}
@@ -169,7 +240,7 @@
                 <input type="text" id="voucherInput" class="main-input" placeholder="例如: 28601..." autocomplete="off" oninput="this.value = this.value.toUpperCase()">
             </div>
             
-            <button id="confirmBtn" class="btn-confirm">確認派發</button>
+            <button id="confirmBtn" class="button2">確認派發</button>
             <button id="cancelBtn" class="btn-cancel">取消 / 下一位</button>
         </div>
     </div>
@@ -191,7 +262,7 @@
                 <label style="color: #e65100; font-weight:bold; display:block; margin-bottom:5px;">🏷️ 請掃描洗水號：</label>
                 <input type="text" id="nmVoucherInput" class="nm-input" placeholder="洗水號" oninput="this.value = this.value.toUpperCase()">
             </div>
-            <button id="nmConfirmBtn" class="btn-confirm" style="background:#FF9800;">確認派發</button>
+            <button id="nmConfirmBtn" class="button2">確認派發</button>
         </div>
     </div>
 
@@ -226,7 +297,7 @@
                 <label style="color: #2e7d32; font-weight:bold; display:block; margin-bottom:5px;">🏷️ 請掃描洗水號：</label>
                 <input type="text" id="newMemVoucherInput" class="nm-input" placeholder="洗水號" oninput="this.value = this.value.toUpperCase()">
             </div>
-            <button id="newMemConfirmBtn" class="btn-confirm" style="background:#4CAF50;">確認入會並派發</button>
+            <button id="newMemConfirmBtn" class="button2">確認入會並派發</button>
         </div>
     </div>
 
