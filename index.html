@@ -10,77 +10,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     
     <style>
-                /* 🔥 新增的超靚立體水波動畫按鈕 */
-                .button2 {
-          display: inline-block;
-          transition: all 0.2s ease-in;
-          position: relative;
-          overflow: hidden;
-          z-index: 1;
-          color: #090909;
-          padding: 0.7em 1.7em;
-          cursor: pointer;
-          font-size: 26px; /* 我幫你稍微調大咗少少字體，等手機易撳啲 */
-          font-weight: bold;
-          border-radius: 0.5em;
-          background: #f0f2f5; /* 配合你系統原本的背景色 */
-          border: 1px solid #f0f2f5;
-          box-shadow: 6px 6px 12px #c5c5c5, -6px -6px 12px #ffffff;
-          width: 100%;
-          margin-top: 20px;
-        }
-
-        .button2:active {
-          color: #666;
-          box-shadow: inset 4px 4px 12px #c5c5c5, inset -4px -4px 12px #ffffff;
-        }
-
-        .button2:before {
-          content: "";
-          position: absolute;
-          left: 50%;
-          transform: translateX(-50%) scaleY(1) scaleX(1.25);
-          top: 100%;
-          width: 140%;
-          height: 180%;
-          background-color: rgba(0, 0, 0, 0.05);
-          border-radius: 50%;
-          display: block;
-          transition: all 0.5s 0.1s cubic-bezier(0.55, 0, 0.1, 1);
-          z-index: -1;
-        }
-
-        .button2:after {
-          content: "";
-          position: absolute;
-          left: 55%;
-          transform: translateX(-50%) scaleY(1) scaleX(1.45);
-          top: 180%;
-          width: 160%;
-          height: 190%;
-          background-color: #4CAF50; /* 我將原本嘅青色改做你系統嘅「確認綠色」 */
-          border-radius: 50%;
-          display: block;
-          transition: all 0.5s 0.1s cubic-bezier(0.55, 0, 0.1, 1);
-          z-index: -1;
-        }
-
-        .button2:hover {
-          color: #ffffff;
-          border: 1px solid #4CAF50;
-        }
-
-        .button2:hover:before {
-          top: -35%;
-          background-color: #4CAF50;
-          transform: translateX(-50%) scaleY(1.3) scaleX(0.8);
-        }
-
-        .button2:hover:after {
-          top: -45%;
-          background-color: #4CAF50;
-          transform: translateX(-50%) scaleY(1.3) scaleX(0.8);
-        }
         *, *::before, *::after { box-sizing: border-box; }
 
         body { font-family: 'PingFang HK', 'Microsoft JhengHei', sans-serif; text-align: center; padding: 20px 10px; margin: 0; min-height: 100vh; background-color: #f0f2f5; transition: background-color 0.3s;}
@@ -121,8 +50,81 @@
         .btn-update { padding: 10px 25px; background: #1976D2; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 18px; font-weight: bold;}
         
         .voucher-box { margin-top: 20px; padding: 20px; background: #e3f2fd; border: 2px solid #2196F3; border-radius: 15px;}
-        .btn-confirm { background-color: #4CAF50; color: white; width: 100%; font-size: 26px; padding: 15px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; margin-top: 20px;}
-        .btn-cancel { background-color: #9e9e9e; color: white; font-size: 20px; width: 100%; padding: 12px; border: none; border-radius: 10px; cursor: pointer; margin-top: 10px;}
+        
+        /* 🔥 新擬態立體水波動畫按鈕 */
+        .button2 {
+          display: inline-block;
+          transition: all 0.2s ease-in;
+          position: relative;
+          overflow: hidden;
+          z-index: 1;
+          color: #090909;
+          padding: 0.7em 1.7em;
+          cursor: pointer;
+          font-size: 26px;
+          font-weight: bold;
+          border-radius: 0.5em;
+          background: #f0f2f5;
+          border: 1px solid #f0f2f5;
+          box-shadow: 6px 6px 12px #c5c5c5, -6px -6px 12px #ffffff;
+          width: 100%;
+          margin-top: 20px;
+        }
+
+        .button2:active {
+          color: #666;
+          box-shadow: inset 4px 4px 12px #c5c5c5, inset -4px -4px 12px #ffffff;
+        }
+
+        .button2:before {
+          content: "";
+          position: absolute;
+          left: 50%;
+          transform: translateX(-50%) scaleY(1) scaleX(1.25);
+          top: 100%;
+          width: 140%;
+          height: 180%;
+          background-color: rgba(0, 0, 0, 0.05);
+          border-radius: 50%;
+          display: block;
+          transition: all 0.5s 0.1s cubic-bezier(0.55, 0, 0.1, 1);
+          z-index: -1;
+        }
+
+        .button2:after {
+          content: "";
+          position: absolute;
+          left: 55%;
+          transform: translateX(-50%) scaleY(1) scaleX(1.45);
+          top: 180%;
+          width: 160%;
+          height: 190%;
+          background-color: #4CAF50;
+          border-radius: 50%;
+          display: block;
+          transition: all 0.5s 0.1s cubic-bezier(0.55, 0, 0.1, 1);
+          z-index: -1;
+        }
+
+        .button2:hover {
+          color: #ffffff;
+          border: 1px solid #4CAF50;
+        }
+
+        .button2:hover:before {
+          top: -35%;
+          background-color: #4CAF50;
+          transform: translateX(-50%) scaleY(1.3) scaleX(0.8);
+        }
+
+        .button2:hover:after {
+          top: -45%;
+          background-color: #4CAF50;
+          transform: translateX(-50%) scaleY(1.3) scaleX(0.8);
+        }
+        /* 按鈕動畫結束 */
+
+        .btn-cancel { background-color: #9e9e9e; color: white; font-size: 20px; width: 100%; padding: 12px; border: none; border-radius: 10px; cursor: pointer; margin-top: 15px;}
         
         .nm-form { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); max-width: 600px; width: 95%; margin: auto; }
         .nm-form label { display: block; font-size: 18px; font-weight: bold; text-align: left; margin-top: 15px; color: #333;}
@@ -130,29 +132,20 @@
 
         .text-red { color: #f44336; } .text-green { color: #4CAF50; } .text-orange { color: #FF9800; }
 
-        /* 🔥 RWD 手機及平板排版優化 (當螢幕細過 768px 時生效) */
         @media (max-width: 768px) {
             body { padding: 10px; }
             .login-container, .nm-form, .result-card { padding: 20px 15px; margin-top: 20px; }
             h1 { font-size: 28px !important; margin-bottom: 20px !important; }
             h2 { font-size: 22px !important; }
             .screen-home-title { font-size: 18px !important; }
-            
-            /* 選單按鈕變直排，佔滿全畫面 */
             .menu-btn { width: 100%; min-width: unset; margin: 10px 0; font-size: 24px; padding: 20px; display: block; }
-            
-            /* Dashboard 字縮細 */
             .dash-stats { font-size: 16px; }
-            
-            /* 輸入框及按鈕縮細 */
             .main-input, .nm-input, .login-input { font-size: 18px; padding: 12px; }
-            .btn-login, .btn-confirm { font-size: 22px; padding: 12px; }
+            .btn-login { font-size: 22px; padding: 12px; }
+            .button2 { font-size: 22px; padding: 12px; }
             #searchMemberBtn { font-size: 16px; padding: 0 15px; }
-            
             .member-name { font-size: 35px; }
             .status-msg { font-size: 24px; }
-            
-            /* 資料更新區變直排 */
             .update-row { flex-direction: column; align-items: flex-start; gap: 8px;}
             .status-select { width: 100%; }
             .btn-update { width: 100%; margin-top: 10px;}
@@ -166,7 +159,7 @@
             <div class="screen-home-title" style="color: #666; font-weight: bold; margin-bottom: 5px;">聖雅各福群會 中西區長者地區中心</div>
             <h1 style="color: #E65100; font-weight: bold; margin-bottom: 25px; margin-top: 5px;">「愛心食肆賞你惠食」第五輪</h1>
             
-            <h2 style="color: #1565c0; margin-top: 0;">🔒 系統登入</h2>
+            <h2 style="color: #1565c0; margin-top: 0;">系統登入</h2>
             <input type="password" id="loginPwd" class="login-input" placeholder="輸入職員密碼...">
             <button onclick="checkLogin()" class="btn-login">進入系統</button>
         </div>
@@ -186,15 +179,15 @@
         
         <h2 style="font-size: 30px; color: #333; margin-bottom: 20px;">請選擇領取者類別</h2>
         <div style="display: flex; justify-content: center; flex-wrap: wrap; max-width: 900px; margin: auto;">
-            <button class="menu-btn btn-member" onclick="switchScreen('screen-member')">👤 中心會員</button>
-            <button class="menu-btn btn-nonmember" onclick="switchScreen('screen-nonmember')">🚶 非會員</button>
-            <button class="menu-btn btn-newmember" onclick="switchScreen('screen-newmember')">🆕 新會員加入</button>
+            <button class="menu-btn btn-member" onclick="switchScreen('screen-member')">中心會員</button>
+            <button class="menu-btn btn-nonmember" onclick="switchScreen('screen-nonmember')">非會員</button>
+            <button class="menu-btn btn-newmember" onclick="switchScreen('screen-newmember')">新會員加入</button>
         </div>
     </div>
 
     <div id="screen-member" class="screen">
-        <button class="back-btn" onclick="switchScreen('screen-home')">🔙 返回首頁</button>
-        <h1>🎁 會員領取登記</h1>
+        <button class="back-btn" onclick="switchScreen('screen-home')">返回首頁</button>
+        <h1>會員領取登記</h1>
         <div class="search-group">
             <input type="text" id="barcodeInput" class="main-input" placeholder="掃描會員證或輸入編號..." autocomplete="off" oninput="this.value = this.value.toUpperCase()">
             <button id="searchMemberBtn">搜尋</button>
@@ -204,7 +197,7 @@
             <div id="statusMsg" class="status-msg"></div>
             
             <div id="ageWarningMsg" class="warning-msg">
-                <span class="warning-title">⚠️ 系統提示：此會員年齡未滿 60 歲</span>
+                <span class="warning-title">系統提示：此會員年齡未滿 60 歲</span>
                 <p class="warning-text">受惠長者需為香港居民，並符合以下 <b>任何一項</b> 條件：<br>
                 1. <b>60歲或以上：</b> 持有有效身分證明文件<br>
                 2. <b>獨居長者：</b> 獨自居住的長者<br>
@@ -216,7 +209,7 @@
             <b class="member-id-tag" id="dispNo"></b>
             
             <div class="update-box">
-                <div style="color: #1976D2; font-weight: bold; margin-bottom: 10px;">📋 資料更新 (如有需要)</div>
+                <div style="color: #1976D2; font-weight: bold; margin-bottom: 10px;">資料更新 (如有需要)</div>
                 <div class="update-row">
                     <span>居住狀況：</span>
                     <select id="newStatus" class="status-select">
@@ -227,16 +220,16 @@
                     </select>
                 </div>
                 <div class="update-row">
-                    <span>新聯絡電話：</span>
+                    <span>聯絡電話：</span>
                     <input type="tel" id="newPhone" class="status-select" placeholder="輸入 8 位電話" maxlength="8">
                 </div>
                 <div style="text-align: right;">
-                    <button onclick="updateMemberInfo()" class="btn-update">💾 儲存更新</button>
+                    <button onclick="updateMemberInfo()" class="btn-update">儲存更新</button>
                 </div>
             </div>
             
             <div class="voucher-box" id="voucherSection">
-                <label style="font-size: 20px; font-weight: bold; color: #1565c0; display: block; margin-bottom: 10px;">🏷️ 請掃描洗水號：</label>
+                <label style="font-size: 20px; font-weight: bold; color: #1565c0; display: block; margin-bottom: 10px;">請掃描洗水號：</label>
                 <input type="text" id="voucherInput" class="main-input" placeholder="例如: 28601..." autocomplete="off" oninput="this.value = this.value.toUpperCase()">
             </div>
             
@@ -246,8 +239,8 @@
     </div>
 
     <div id="screen-nonmember" class="screen">
-        <button class="back-btn" onclick="switchScreen('screen-home')">🔙 返回首頁</button>
-        <h1>🚶 非會員領取登記</h1>
+        <button class="back-btn" onclick="switchScreen('screen-home')">返回首頁</button>
+        <h1>非會員領取登記</h1>
         <div class="nm-form">
             <label>姓名：</label><input type="text" id="nmName" class="nm-input" placeholder="全名">
             <label>身份證：</label><input type="text" id="nmHkid" class="nm-input" placeholder="身份證" oninput="this.value = this.value.toUpperCase()">
@@ -259,7 +252,7 @@
                 <option value="隱蔽長者">隱蔽長者</option>
             </select>
             <div class="voucher-box" style="background: #fff3e0; border-color: #FF9800;">
-                <label style="color: #e65100; font-weight:bold; display:block; margin-bottom:5px;">🏷️ 請掃描洗水號：</label>
+                <label style="color: #e65100; font-weight:bold; display:block; margin-bottom:5px;">請掃描洗水號：</label>
                 <input type="text" id="nmVoucherInput" class="nm-input" placeholder="洗水號" oninput="this.value = this.value.toUpperCase()">
             </div>
             <button id="nmConfirmBtn" class="button2">確認派發</button>
@@ -267,11 +260,11 @@
     </div>
 
     <div id="screen-newmember" class="screen">
-        <button class="back-btn" onclick="switchScreen('screen-home')">🔙 返回首頁</button>
-        <h1>🆕 新會員即場加入及派發</h1>
+        <button class="back-btn" onclick="switchScreen('screen-home')">返回首頁</button>
+        <h1>新會員即場加入及派發</h1>
         <div class="nm-form">
             <div id="newAgeWarningMsg" class="warning-msg">
-                <span class="warning-title">⚠️ 系統提示：此會員年齡未滿 60 歲</span>
+                <span class="warning-title">系統提示：此會員年齡未滿 60 歲</span>
                 <p class="warning-text">受惠長者需為香港居民，並符合以下 <b>任何一項</b> 條件：<br>
                 1. <b>60歲或以上：</b> 持有有效身分證明文件<br>
                 2. <b>獨居長者：</b> 獨自居住的長者<br>
@@ -294,7 +287,7 @@
                 <option value="隱蔽長者">隱蔽長者</option>
             </select>
             <div class="voucher-box" style="background: #e8f5e9; border-color: #4CAF50;">
-                <label style="color: #2e7d32; font-weight:bold; display:block; margin-bottom:5px;">🏷️ 請掃描洗水號：</label>
+                <label style="color: #2e7d32; font-weight:bold; display:block; margin-bottom:5px;">請掃描洗水號：</label>
                 <input type="text" id="newMemVoucherInput" class="nm-input" placeholder="洗水號" oninput="this.value = this.value.toUpperCase()">
             </div>
             <button id="newMemConfirmBtn" class="button2">確認入會並派發</button>
@@ -302,14 +295,14 @@
     </div>
 
     <script>
-        // ==================== 1. 登入設定 ====================
+        // 登入設定 (新密碼)
         const STAFF_PASSWORD = "CwdeccTeama1234"; 
         
         function checkLogin() {
             if (document.getElementById('loginPwd').value === STAFF_PASSWORD) {
                 sessionStorage.setItem('isStaffLoggedIn', 'true');
                 showMainSystem();
-            } else { alert('❌ 密碼錯誤'); }
+            } else { alert('密碼錯誤'); }
         }
         
         function showMainSystem() {
@@ -324,7 +317,7 @@
             if(e.key === 'Enter') checkLogin(); 
         };
 
-        // ==================== 2. Firebase 初始化 ====================
+        // Firebase 初始化
         const firebaseConfig = {
             apiKey: "AIzaSyBkYaOS6YFapXxt4UTwTy3bkK-C_f50hWw",
             authDomain: "food-voucher-2026.firebaseapp.com",
@@ -336,7 +329,6 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // ==================== 3. 系統功能 ====================
         function maskName(name) {
             if (!name || name.length < 2) return name;
             return name.charAt(0) + "*".repeat(name.length - 2) + name.charAt(name.length - 1);
@@ -385,7 +377,6 @@
             }
         }
 
-        // ==================== 4. 會員搜尋 ====================
         async function performSearch() {
             const val = document.getElementById('barcodeInput').value.trim().toUpperCase();
             document.getElementById('barcodeInput').value = "";
@@ -418,12 +409,12 @@
                     
                     if (data.hasClaimed) {
                         document.body.style.backgroundColor = "#ffcdd2";
-                        document.getElementById('statusMsg').innerHTML = `<span class="text-red">⚠️ 此會員已領取</span><br><small>洗水號: ${data.voucherNo}</small>`;
+                        document.getElementById('statusMsg').innerHTML = `<span class="text-red">此會員已領取</span><br><small>洗水號: ${data.voucherNo}</small>`;
                         document.getElementById('confirmBtn').style.display = "none";
                         document.getElementById('voucherSection').style.display = "none";
                     } else {
                         document.body.style.backgroundColor = "#c8e6c9";
-                        document.getElementById('statusMsg').innerHTML = `<span class="text-green">✅ 資格確認：未領取</span>`;
+                        document.getElementById('statusMsg').innerHTML = `<span class="text-green">資格確認：未領取</span>`;
                         document.getElementById('confirmBtn').style.display = "block";
                         document.getElementById('voucherSection').style.display = "block";
                         document.getElementById('voucherInput').value = "";
@@ -433,24 +424,22 @@
             } catch (e) { alert(e); }
         }
 
-        // ==================== 5. 按鈕及鍵盤事件綁定 ====================
         document.getElementById('searchMemberBtn').onclick = performSearch;
         document.getElementById('barcodeInput').onkeypress = function(e) { if(e.key==='Enter') performSearch(); };
         document.getElementById('voucherInput').onkeypress = function(e) { if(e.key==='Enter') document.getElementById('confirmBtn').click(); };
         document.getElementById('nmVoucherInput').onkeypress = function(e) { if(e.key==='Enter') document.getElementById('nmConfirmBtn').click(); };
         document.getElementById('newMemVoucherInput').onkeypress = function(e) { if(e.key==='Enter') document.getElementById('newMemConfirmBtn').click(); };
 
-        // ==================== 6. 確認派發邏輯 ====================
         document.getElementById('confirmBtn').onclick = async () => {
             const v = document.getElementById('voucherInput').value.trim();
-            if (!validVoucherSet.has(v)) return alert("❌ 洗水號無效！不在發放範圍內。");
+            if (!validVoucherSet.has(v)) return alert("洗水號無效！不在發放範圍內。");
             const dup1 = await db.collection('members').where('voucherNo', '==', v).get();
             const dup2 = await db.collection('non_members').where('voucherNo', '==', v).get();
-            if (!dup1.empty || !dup2.empty) return alert("❌ 警告：此洗水號已被使用！");
+            if (!dup1.empty || !dup2.empty) return alert("警告：此洗水號已被使用！");
 
             await currentTargetRef.update({ hasClaimed: true, claimTime: new Date().toISOString(), voucherNo: v });
             document.body.style.backgroundColor = "#4CAF50";
-            document.getElementById('statusMsg').innerHTML = "✅ 成功紀錄！請交出食物劵。";
+            document.getElementById('statusMsg').innerHTML = "成功紀錄！請交出食物劵。";
             document.getElementById('confirmBtn').style.display = "none";
             document.getElementById('voucherSection').style.display = "none";
             setTimeout(() => document.getElementById('barcodeInput').focus(), 1500);
@@ -464,7 +453,7 @@
             if (s) up.livingStatus = s;
             if (p) up.updatedPhone = p;
             await currentTargetRef.update(up);
-            alert("✅ 資料已儲存，將會反映在匯出報告中。");
+            alert("資料已儲存，將會反映在匯出報告中。");
             document.getElementById('newStatus').value = "";
             document.getElementById('newPhone').value = "";
         };
@@ -477,17 +466,17 @@
             const v = document.getElementById('nmVoucherInput').value.trim();
 
             if(!name || !hkid || !p || !v) return alert("請填寫所有欄位");
-            if (!validVoucherSet.has(v)) return alert("❌ 洗水號無效！");
+            if (!validVoucherSet.has(v)) return alert("洗水號無效！");
             
             const dupHkid = await db.collection('non_members').doc(hkid).get();
-            if (dupHkid.exists) return alert("❌ 此身份證已登記領取過！");
+            if (dupHkid.exists) return alert("此身份證已登記領取過！");
             
             const dupV1 = await db.collection('members').where('voucherNo', '==', v).get();
             const dupV2 = await db.collection('non_members').where('voucherNo', '==', v).get();
-            if (!dupV1.empty || !dupV2.empty) return alert("❌ 此洗水號已被使用！");
+            if (!dupV1.empty || !dupV2.empty) return alert("警告：此洗水號已被使用！");
 
             await db.collection('non_members').doc(hkid).set({ name, hkid, phone: p, livingStatus: s, voucherNo: v, claimTime: new Date().toISOString() });
-            alert("✅ 非會員登記成功！");
+            alert("非會員登記成功！");
             switchScreen('screen-home');
         };
         
@@ -501,14 +490,14 @@
             const v = document.getElementById('newMemVoucherInput').value.trim();
 
             if(!no || !name || !hkid || !age || !v) return alert("請填寫所有必填欄位！");
-            if (!validVoucherSet.has(v)) return alert("❌ 洗水號無效！");
+            if (!validVoucherSet.has(v)) return alert("洗水號無效！");
             
             const dupMem = await db.collection('members').doc(no).get();
-            if (dupMem.exists) return alert("❌ 警告：此會員號碼已存在系統中！");
+            if (dupMem.exists) return alert("警告：此會員號碼已存在系統中！");
             
             const dupV1 = await db.collection('members').where('voucherNo', '==', v).get();
             const dupV2 = await db.collection('non_members').where('voucherNo', '==', v).get();
-            if (!dupV1.empty || !dupV2.empty) return alert("❌ 此洗水號已被使用！");
+            if (!dupV1.empty || !dupV2.empty) return alert("警告：此洗水號已被使用！");
 
             await db.collection('members').doc(no).set({ 
                 memberNo: no, 
@@ -523,7 +512,7 @@
                 isNewMember: true 
             });
             
-            alert("✅ 新會員入會及派發成功！紀錄已同步至系統。");
+            alert("新會員入會及派發成功！紀錄已同步至系統。");
             switchScreen('screen-home');
         };
 
